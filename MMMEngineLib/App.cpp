@@ -1,8 +1,12 @@
 #include "App.h"
 
-MMMEngine::App::App(HINSTANCE hInstance)
-	: m_hInstance(hInstance)
-	, m_hWnd(nullptr)
+MMMEngine::App::App()
+	: m_hWnd(nullptr)
+	, onIntialize(this)
+	, onRender(this)
+	, onResize(this)
+	, onShutdown(this)
+	, onUpdate(this)
 {
 	m_windowTitle = L"MMM Engine Application";
 }
@@ -22,6 +26,11 @@ void MMMEngine::App::Run()
 
 void MMMEngine::App::Shutdown()
 {
+}
+
+LRESULT MMMEngine::App::HandleWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return LRESULT();
 }
 
 bool MMMEngine::App::CreateMainWindow()
