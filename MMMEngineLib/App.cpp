@@ -22,6 +22,7 @@ bool MMMEngine::App::Initialize()
 
 void MMMEngine::App::Run()
 {
+	onRender.Invoke(this);
 }
 
 void MMMEngine::App::Shutdown()

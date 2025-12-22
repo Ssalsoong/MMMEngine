@@ -124,6 +124,50 @@ namespace SA {
 
 		std::list<typename delegate_base<RET(PARAMS...)>::InvocationElement *> invocationList;
 
+	// === MMMEnigine Code === //
+	public:
+		// -= operator: Remove the first matching delegate
+		multicast_delegate& operator -=(const delegate<RET(PARAMS...)>& another) {
+			if (another.isNull()) return *this;
+
+			// Find and remove the first matching element
+			for (auto it = invocationList.begin(); it != invocationList.end(); ++it) {
+				if (**it == another.invocation) {
+					delete* it;  // Free memory
+					invocationList.erase(it);
+					break;  // Remove only the first match for safety
+				}
+			}
+			return *this;
+		} //operator -=
+
+		// Remove all instances of a matching delegate (for when duplicates exist)
+		size_t removeAll(const delegate<RET(PARAMS...)>& another) {
+			if (another.isNull()) return 0;
+
+			size_t removedCount = 0;
+			auto it = invocationList.begin();
+			while (it != invocationList.end()) {
+				if (**it == another.invocation) {
+					delete* it;
+					it = invocationList.erase(it);
+					++removedCount;
+				}
+				else {
+					++it;
+				}
+			}
+			return removedCount;
+		} //removeAll
+
+		// Clear all listeners
+		void clear() {
+			for (auto& element : invocationList) delete element;
+			invocationList.clear();
+		} //clear
+
+	// === end of MMMEngine Code === //
+
 	}; //class multicast_delegate
 
 } /* namespace SA */
