@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "fast_delegate/MultiCastDelegate.h"
 #include <unordered_map>
 #include <functional>
@@ -6,17 +6,17 @@
 
 namespace MMMEngine
 {
-    // ÇÔ¼ö ½Ã±×´ÏÃ³¸¦ °íÀ¯ÇÏ°Ô ½Äº°ÇÏ±â À§ÇÑ Å°
+    // í•¨ìˆ˜ ì‹œê·¸ë‹ˆì²˜ë¥¼ ê³ ìœ í•˜ê²Œ ì‹ë³„í•˜ê¸° ìœ„í•œ í‚¤
     struct FunctionKey {
-        void* objectPtr;  // °´Ã¼ Æ÷ÀÎÅÍ (ÀÚÀ¯ ÇÔ¼ö´Â nullptr)
-        void* functionPtr; // ÇÔ¼ö Æ÷ÀÎÅÍ
+        void* objectPtr;  // ê°ì²´ í¬ì¸í„° (ììœ  í•¨ìˆ˜ëŠ” nullptr)
+        void* functionPtr; // í•¨ìˆ˜ í¬ì¸í„°
 
         bool operator==(const FunctionKey& other) const {
             return objectPtr == other.objectPtr && functionPtr == other.functionPtr;
         }
     };
 
-    // FunctionKey¸¦ À§ÇÑ ÇØ½Ã ÇÔ¼ö
+    // FunctionKeyë¥¼ ìœ„í•œ í•´ì‹œ í•¨ìˆ˜
     struct FunctionKeyHash {
         std::size_t operator()(const FunctionKey& key) const {
             return std::hash<void*>()(key.objectPtr) ^
@@ -24,7 +24,7 @@ namespace MMMEngine
         }
     };
 
-    // Action: void ¹İÈ¯Çü µ¨¸®°ÔÀÌÆ®
+    // Action: void ë°˜í™˜í˜• ë¸ë¦¬ê²Œì´íŠ¸
     template<typename... Args>
     class Action {
     public:
@@ -35,12 +35,12 @@ namespace MMMEngine
         Action() = default;
         ~Action() = default;
 
-        // ÀÚÀ¯ ÇÔ¼ö Ãß°¡ (ÇÔ¼ö Æ÷ÀÎÅÍ Á÷Á¢ ¹Ş±â)
+        // ììœ  í•¨ìˆ˜ ì¶”ê°€ (í•¨ìˆ˜ í¬ì¸í„° ì§ì ‘ ë°›ê¸°)
         void AddListener(FunctionPtr function) {
             FunctionKey key{ nullptr, reinterpret_cast<void*>(function) };
 
             if (m_functionMap.find(key) != m_functionMap.end())
-                return; // ÀÌ¹Ì µî·ÏµÊ
+                return; // ì´ë¯¸ ë“±ë¡ë¨
 
             auto delegate = DelegateType([function](Args... args) {
                 function(args...);
@@ -49,14 +49,14 @@ namespace MMMEngine
             m_multicast += delegate;
         }
 
-        // ¸â¹ö ÇÔ¼ö Ãß°¡ (std::bind ½ºÅ¸ÀÏ)
+        // ë©¤ë²„ í•¨ìˆ˜ ì¶”ê°€ (std::bind ìŠ¤íƒ€ì¼)
         template<typename T>
         void AddListener(T* instance, void(T::* method)(Args...)) {
             void* methodPtr = *reinterpret_cast<void**>(&method);
             FunctionKey key{ instance, methodPtr };
 
             if (m_functionMap.find(key) != m_functionMap.end())
-                return; // ÀÌ¹Ì µî·ÏµÊ
+                return; // ì´ë¯¸ ë“±ë¡ë¨
 
             auto delegate = DelegateType([instance, method](Args... args) {
                 (instance->*method)(args...);
@@ -65,7 +65,7 @@ namespace MMMEngine
             m_multicast += delegate;
         }
 
-        // Const ¸â¹ö ÇÔ¼ö Ãß°¡
+        // Const ë©¤ë²„ í•¨ìˆ˜ ì¶”ê°€
         template<typename T>
         void AddListener(const T* instance, void(T::* method)(Args...) const) {
             void* methodPtr = *reinterpret_cast<void**>(const_cast<void(T::**)(Args...) const>(&method));
@@ -81,21 +81,21 @@ namespace MMMEngine
             m_multicast += delegate;
         }
 
-        // ¶÷´Ù Ãß°¡ (Á¦°Å ºÒ°¡´É, ÇÏÁö¸¸ += ¿¬»êÀÚ·Î »ç¿ë °¡´É)
+        // ëŒë‹¤ ì¶”ê°€ (ì œê±° ë¶ˆê°€ëŠ¥, í•˜ì§€ë§Œ += ì—°ì‚°ìë¡œ ì‚¬ìš© ê°€ëŠ¥)
         template<typename Lambda>
         void AddListener(const Lambda& lambda) {
             auto delegate = DelegateType(lambda);
             m_multicast += delegate;
         }
 
-        // ¶÷´Ù¿ë += ¿¬»êÀÚ (ÇÔ¼ö Æ÷ÀÎÅÍ°¡ ¾Æ´Ñ ¸ğµç callable)
+        // ëŒë‹¤ìš© += ì—°ì‚°ì (í•¨ìˆ˜ í¬ì¸í„°ê°€ ì•„ë‹Œ ëª¨ë“  callable)
         template<typename Lambda>
         Action& operator+=(const Lambda& lambda) {
             AddListener(lambda);
             return *this;
         }
 
-        // ÀÚÀ¯ ÇÔ¼ö Á¦°Å
+        // ììœ  í•¨ìˆ˜ ì œê±°
         bool RemoveListener(FunctionPtr function) {
             FunctionKey key{ nullptr, reinterpret_cast<void*>(function) };
 
@@ -108,7 +108,7 @@ namespace MMMEngine
             return true;
         }
 
-        // ¸â¹ö ÇÔ¼ö Á¦°Å
+        // ë©¤ë²„ í•¨ìˆ˜ ì œê±°
         template<typename T>
         bool RemoveListener(T* instance, void(T::* method)(Args...)) {
             void* methodPtr = *reinterpret_cast<void**>(&method);
@@ -123,7 +123,7 @@ namespace MMMEngine
             return true;
         }
 
-        // Const ¸â¹ö ÇÔ¼ö Á¦°Å
+        // Const ë©¤ë²„ í•¨ìˆ˜ ì œê±°
         template<typename T>
         bool RemoveListener(const T* instance, void(T::* method)(Args...) const) {
             void* methodPtr = *reinterpret_cast<void**>(const_cast<void(T::**)(Args...) const>(&method));
@@ -138,7 +138,7 @@ namespace MMMEngine
             return true;
         }
 
-        // -= ¿¬»êÀÚ (ÀÚÀ¯ ÇÔ¼ö¸¸ °¡´É)
+        // -= ì—°ì‚°ì (ììœ  í•¨ìˆ˜ë§Œ ê°€ëŠ¥)
         Action& operator-=(FunctionPtr function) {
             RemoveListener(function);
             return *this;
@@ -166,7 +166,7 @@ namespace MMMEngine
         std::unordered_map<FunctionKey, DelegateType, FunctionKeyHash> m_functionMap;
     };
 
-    // Func: ¹İÈ¯°ªÀÌ ÀÖ´Â µ¨¸®°ÔÀÌÆ®
+    // Func: ë°˜í™˜ê°’ì´ ìˆëŠ” ë¸ë¦¬ê²Œì´íŠ¸
     template<typename R, typename... Args>
     class Func {
     public:
@@ -177,7 +177,7 @@ namespace MMMEngine
         Func() = default;
         ~Func() = default;
 
-        // ÀÚÀ¯ ÇÔ¼ö Ãß°¡
+        // ììœ  í•¨ìˆ˜ ì¶”ê°€
         void AddListener(FunctionPtr function) {
             FunctionKey key{ nullptr, reinterpret_cast<void*>(function) };
 
@@ -191,7 +191,7 @@ namespace MMMEngine
             m_multicast += delegate;
         }
 
-        // ¸â¹ö ÇÔ¼ö Ãß°¡
+        // ë©¤ë²„ í•¨ìˆ˜ ì¶”ê°€
         template<typename T>
         void AddListener(T* instance, R(T::* method)(Args...)) {
             void* methodPtr = *reinterpret_cast<void**>(&method);
@@ -207,7 +207,7 @@ namespace MMMEngine
             m_multicast += delegate;
         }
 
-        // Const ¸â¹ö ÇÔ¼ö Ãß°¡
+        // Const ë©¤ë²„ í•¨ìˆ˜ ì¶”ê°€
         template<typename T>
         void AddListener(const T* instance, R(T::* method)(Args...) const) {
             void* methodPtr = *reinterpret_cast<void**>(const_cast<R(T::**)(Args...) const>(&method));
@@ -223,21 +223,21 @@ namespace MMMEngine
             m_multicast += delegate;
         }
 
-        // ¶÷´Ù Ãß°¡
+        // ëŒë‹¤ ì¶”ê°€
         template<typename Lambda>
         void AddListener(const Lambda& lambda) {
             auto delegate = DelegateType(lambda);
             m_multicast += delegate;
         }
 
-        // ¶÷´Ù¿ë += ¿¬»êÀÚ
+        // ëŒë‹¤ìš© += ì—°ì‚°ì
         template<typename Lambda>
         Func& operator+=(const Lambda& lambda) {
             AddListener(lambda);
             return *this;
         }
 
-        // ÀÚÀ¯ ÇÔ¼ö Á¦°Å
+        // ììœ  í•¨ìˆ˜ ì œê±°
         bool RemoveListener(FunctionPtr function) {
             FunctionKey key{ nullptr, reinterpret_cast<void*>(function) };
 
@@ -250,7 +250,7 @@ namespace MMMEngine
             return true;
         }
 
-        // ¸â¹ö ÇÔ¼ö Á¦°Å
+        // ë©¤ë²„ í•¨ìˆ˜ ì œê±°
         template<typename T>
         bool RemoveListener(T* instance, R(T::* method)(Args...)) {
             void* methodPtr = *reinterpret_cast<void**>(&method);
@@ -265,7 +265,7 @@ namespace MMMEngine
             return true;
         }
 
-        // Const ¸â¹ö ÇÔ¼ö Á¦°Å
+        // Const ë©¤ë²„ í•¨ìˆ˜ ì œê±°
         template<typename T>
         bool RemoveListener(const T* instance, R(T::* method)(Args...) const) {
             void* methodPtr = *reinterpret_cast<void**>(const_cast<R(T::**)(Args...) const>(&method));
@@ -280,7 +280,7 @@ namespace MMMEngine
             return true;
         }
 
-        // -= ¿¬»êÀÚ
+        // -= ì—°ì‚°ì
         Func& operator-=(FunctionPtr function) {
             RemoveListener(function);
             return *this;
@@ -313,7 +313,26 @@ namespace MMMEngine
         std::unordered_map<FunctionKey, DelegateType, FunctionKeyHash> m_functionMap;
     };
 
-    // Event: ¼ÒÀ¯ÀÚ¸¸ Invoke °¡´ÉÇÑ µ¨¸®°ÔÀÌÆ®
+    // ----------------------------------------
+    // Event: ì†Œìœ ìë§Œ Invoke ê°€ëŠ¥í•œ ë¸ë¦¬ê²Œì´íŠ¸
+    // 
+    // ì‘ì„± ìš”ë ¹ : 
+    //  EventëŠ” ì†Œìœ ì í´ë˜ìŠ¤ì˜ ë©¤ë²„ë¡œ ì‚¬ìš©í•´ì•¼í•©ë‹ˆë‹¤.
+    //  í…œí”Œë¦¿ì˜ ì²« ì¸ìì—ëŠ” í´ë˜ìŠ¤ì˜ íƒ€ì…ì„ ëª…ì‹œí•©ë‹ˆë‹¤.
+    //  ì´ˆê¸°í™”ë¬¸ì˜ ì¸ìì—ëŠ” thisë¥¼ ë„£ì–´ì£¼ì„¸ìš”.
+    //  
+    //  ìš”ì•½í•˜ìë©´ ì•„ë˜ì™€ ê°™ì´ ì‘ì„±í•´ì£¼ì„¸ìš”
+    // 
+    //  Event<OwnerType, void(void)> OnUpdate{ this };
+    // 
+    // 
+    //  ì†Œìœ ìëŠ” ì•„ë˜ì™€ ê°™ì€ ë°©ë²•ìœ¼ë¡œ Invokeë¥¼ í˜¸ì¶œí•©ë‹ˆë‹¤.
+    // 
+    //  ( * í´ë˜ìŠ¤ ë©¤ë²„ í•¨ìˆ˜ ë‚´ì—ì„œ )
+    //  OnReceive.Invoke(this, arg1, arg2);
+    //  OnReceive(this, arg1, arg2);
+    // ----------------------------------------
+
     template<typename OwnerType, typename Signature>
     class Event;
 
@@ -324,9 +343,15 @@ namespace MMMEngine
         using DelegateType = SA::delegate<R(Args...)>;
         using MulticastType = SA::multicast_delegate<R(Args...)>;
 
-        explicit Event(OwnerType* owner) : m_owner(owner) {}
+        explicit Event(OwnerType* owner) : m_owner(owner) {
+            if (owner == nullptr) {
+                throw std::invalid_argument("Event owner cannot be nullptr");
+            }
+        }
 
-        // ÀÚÀ¯ ÇÔ¼ö Ãß°¡
+        Event(std::nullptr_t) = delete;
+
+        // ììœ  í•¨ìˆ˜ ì¶”ê°€
         void AddListener(FunctionPtr function) {
             FunctionKey key{ nullptr, reinterpret_cast<void*>(function) };
 
@@ -345,7 +370,7 @@ namespace MMMEngine
             m_multicast += delegate;
         }
 
-        // ¸â¹ö ÇÔ¼ö Ãß°¡
+        // ë©¤ë²„ í•¨ìˆ˜ ì¶”ê°€
         template<typename T>
         void AddListener(T* instance, R(T::* method)(Args...)) {
             void* methodPtr = *reinterpret_cast<void**>(&method);
@@ -366,7 +391,7 @@ namespace MMMEngine
             m_multicast += delegate;
         }
 
-        // Const ¸â¹ö ÇÔ¼ö Ãß°¡
+        // Const ë©¤ë²„ í•¨ìˆ˜ ì¶”ê°€
         template<typename T>
         void AddListener(const T* instance, R(T::* method)(Args...) const) {
             void* methodPtr = *reinterpret_cast<void**>(const_cast<R(T::**)(Args...) const>(&method));
@@ -387,21 +412,21 @@ namespace MMMEngine
             m_multicast += delegate;
         }
 
-        // ¶÷´Ù Ãß°¡
+        // ëŒë‹¤ ì¶”ê°€
         template<typename Lambda>
         void AddListener(const Lambda& lambda) {
             auto delegate = DelegateType(lambda);
             m_multicast += delegate;
         }
 
-        // ¶÷´Ù¿ë += ¿¬»êÀÚ
+        // ëŒë‹¤ìš© += ì—°ì‚°ì
         template<typename Lambda>
         Event& operator+=(const Lambda& lambda) {
             AddListener(lambda);
             return *this;
         }
 
-        // ÀÚÀ¯ ÇÔ¼ö Á¦°Å
+        // ììœ  í•¨ìˆ˜ ì œê±°
         bool RemoveListener(FunctionPtr function) {
             FunctionKey key{ nullptr, reinterpret_cast<void*>(function) };
 
@@ -414,7 +439,7 @@ namespace MMMEngine
             return true;
         }
 
-        // ¸â¹ö ÇÔ¼ö Á¦°Å
+        // ë©¤ë²„ í•¨ìˆ˜ ì œê±°
         template<typename T>
         bool RemoveListener(T* instance, R(T::* method)(Args...)) {
             void* methodPtr = *reinterpret_cast<void**>(&method);
@@ -429,7 +454,7 @@ namespace MMMEngine
             return true;
         }
 
-        // Const ¸â¹ö ÇÔ¼ö Á¦°Å
+        // Const ë©¤ë²„ í•¨ìˆ˜ ì œê±°
         template<typename T>
         bool RemoveListener(const T* instance, R(T::* method)(Args...) const) {
             void* methodPtr = *reinterpret_cast<void**>(const_cast<R(T::**)(Args...) const>(&method));
@@ -444,7 +469,7 @@ namespace MMMEngine
             return true;
         }
 
-        // -= ¿¬»êÀÚ
+        // -= ì—°ì‚°ì
         Event& operator-=(FunctionPtr function) {
             RemoveListener(function);
             return *this;
@@ -466,7 +491,7 @@ namespace MMMEngine
 
         friend OwnerType;
 
-        // ¼ÒÀ¯ÀÚ¸¸ È£Ãâ °¡´É
+        // ì†Œìœ ìë§Œ í˜¸ì¶œ ê°€ëŠ¥
         void Invoke(OwnerType* owner, Args... args) {
             if (owner != m_owner)
                 throw std::runtime_error("Event invoked by non-owner");
@@ -478,6 +503,9 @@ namespace MMMEngine
                 return m_multicast(args...);
             }
         }
-    };
 
+        auto operator()(OwnerType* owner, Args... args) {
+            return Invoke(owner, args...);
+        }
+    };
 } // namespace MMMEngine

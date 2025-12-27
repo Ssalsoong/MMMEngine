@@ -1,4 +1,4 @@
-#include <memory>
+ï»¿#include <memory>
 
 namespace MMMEngine
 {
@@ -8,15 +8,15 @@ namespace MMMEngine
     private:
         static std::unique_ptr<T> m_instance;
     public:
-        // º¹»ç »ı¼ºÀÚ¿Í ´ëÀÔ ¿¬»êÀÚ¸¦ »èÁ¦ÇÏ¿© º¹»ç ¹æÁö
+        // ë³µì‚¬ ìƒì„±ìì™€ ëŒ€ì… ì—°ì‚°ìë¥¼ ì‚­ì œí•˜ì—¬ ë³µì‚¬ ë°©ì§€
         Singleton(const Singleton&) = delete;
         Singleton& operator=(const Singleton&) = delete;
         static T* Get()
         {
             if (!m_instance)
             {
-                // ±âº» »ı¼ºÀÚ¸¦ È£ÃâÇÏ´Â ¹æ½Ä
-                // ÆÄ»ı Å¬·¡½º¿¡¼­ ÇÊ¿ä¿¡ µû¶ó Initialize ¸Ş¼­µå Ãß°¡ °¡´É
+                // ê¸°ë³¸ ìƒì„±ìë¥¼ í˜¸ì¶œí•˜ëŠ” ë°©ì‹
+                // íŒŒìƒ í´ë˜ìŠ¤ì—ì„œ í•„ìš”ì— ë”°ë¼ Initialize ë©”ì„œë“œ ì¶”ê°€ ê°€ëŠ¥
                 m_instance = std::unique_ptr<T>(new T());
             }
             return m_instance.get();
@@ -27,9 +27,9 @@ namespace MMMEngine
             m_instance.reset();
         }
     protected:
-        // »ı¼ºÀÚ´Â protected·Î ÆÄ»ı Å¬·¡½º¸¸ Á¢±Ù °¡´É
+        // ìƒì„±ìëŠ” protectedë¡œ íŒŒìƒ í´ë˜ìŠ¤ë§Œ ì ‘ê·¼ ê°€ëŠ¥
         Singleton() {}
-        // °¡»ó ¼Ò¸êÀÚ
+        // ê°€ìƒ ì†Œë©¸ì
         virtual ~Singleton() {}
     };
 

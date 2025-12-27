@@ -15,11 +15,11 @@ namespace MMMEngine
 		void Run();
 		void Shutdown();
 
-		Event<App, void(void)> onIntialize;
-		Event<App, void(void)> onShutdown;
-		Event<App, void(void)> onUpdate;
-		Event<App, void(void)> onRender;
-		Event<App, void(void)> onResize;
+		Event<App, void(void)> onIntialize{ this };
+		Event<App, void(void)> onShutdown{ this };
+		Event<App, void(void)> onUpdate{ this };
+		Event<App, void(void)> onRender{ this };
+		Event<App, void(void)> onResize{ this };
 
 	protected:
 		LRESULT HandleWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
