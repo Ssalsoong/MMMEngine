@@ -1,4 +1,10 @@
-﻿#pragma once
+﻿/*
+    Based on "The Impossibly Fast C++ Delegates"
+    Copyright (C) 2017 Sergey A Kryukov, 2005 Sergey Ryazanov
+    MIT License - See THIRD_PARTY_NOTICES.txt
+*/
+
+#pragma once
 #include "fast_delegate/MultiCastDelegate.h"
 #include <unordered_map>
 #include <functional>
