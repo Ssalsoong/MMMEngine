@@ -1,33 +1,27 @@
 #pragma once
-#include "rttr/registration"
-#include "rttr/detail/policies/ctor_policies.h"
-
-using namespace rttr;
+#include "rttr/type"
+#include "GUID.h"
 
 namespace MMMEngine
 {
-	RTTR_REGISTRATION
-	{
-		registration::class_<Object>("Object")
-			.constructor<>()
-				(rttr::policy::ctor::as_raw_ptr)
-			.property("name", Object::GetName, Object::SetName);
-	}
-
 	class Object
 	{
 	private:
+		RTTR_ENABLE()
+	private:
 		static uint64_t s_nextInstanceID;
 		uint64_t		m_instanceID;
+		GUID			m_guid;
 		bool			m_isDestroyed = false;
 
 		void MarkDestory() { m_isDestroyed = true; }
-	protected:
+	public:
 		std::string m_name;
 
 		Object() : m_instanceID(s_nextInstanceID++)
 		{
 			m_name = "<Unnamed> [ Instance ID : " + std::to_string(m_instanceID) + " ]";
+			m_guid = GUID::NewGuid();
 		}
 
 		virtual ~Object() = default;

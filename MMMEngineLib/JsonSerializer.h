@@ -1,16 +1,16 @@
 #pragma once
-#include <rttr/registration.h>
-#include <rttr/detail/policies/ctor_policies.h>
-
+#include "rttr/type.h"
 #include "json/json.hpp"
 
 using namespace nlohmann::json_abi_v3_12_0;
 
 #include <type_traits>
-#include "Object.h"
+
+using namespace rttr;
 
 namespace MMMEngine
 {
+	class Object;
 	class JsonSerializer
 	{
 	private:

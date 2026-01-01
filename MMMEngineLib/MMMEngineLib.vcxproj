@@ -286,6 +286,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="JsonSerializer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="rttr\constructor.cpp" />
     <ClCompile Include="rttr\destructor.cpp" />
     <ClCompile Include="rttr\detail\comparison\compare_equal.cpp" />

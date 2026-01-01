@@ -596,6 +596,9 @@
     <ClCompile Include="rttr\detail\variant\variant_compare.cpp">
       <Filter>RTTR\Detail\Variant</Filter>
     </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="rttr\registration">
