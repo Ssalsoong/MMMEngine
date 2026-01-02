@@ -492,6 +492,9 @@
     <ClInclude Include="rttr\detail\variant_sequential_view\variant_sequential_view_private.h">
       <Filter>RTTR\Detail\VariantSequentialView</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp">

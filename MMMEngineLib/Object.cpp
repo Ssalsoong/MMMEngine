@@ -12,5 +12,8 @@ RTTR_REGISTRATION
 	registration::class_<MMMEngine::Object>("Object")
 		.constructor<>()
 			(rttr::policy::ctor::as_raw_ptr)
-		.property("name", &MMMEngine::Object::GetName, &MMMEngine::Object::SetName);
+		.property("Name", &MMMEngine::Object::GetName, &MMMEngine::Object::SetName)
+		.property("GUID", &MMMEngine::Object::GetGUID, &MMMEngine::Object::SetGUID)
+		.property_readonly("InstanceID", &MMMEngine::Object::GetInstanceID)
+		.property_readonly("isDestroyed", &MMMEngine::Object::IsDestroyed);
 }

@@ -11,7 +11,7 @@ using namespace rttr;
 namespace MMMEngine
 {
 	class Object;
-	class JsonSerializer
+	class ObjectSerializer
 	{
 	private:
 		std::optional<json> SerializeVariant(const variant& var);

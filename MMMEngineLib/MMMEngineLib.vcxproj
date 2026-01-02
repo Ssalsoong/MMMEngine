@@ -152,6 +152,7 @@
     <ClInclude Include="GUID.h" />
     <ClInclude Include="JsonSerializer.h" />
     <ClInclude Include="Object.h" />
+    <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="rttr\access_levels.h" />
     <ClInclude Include="rttr\argument.h" />
     <ClInclude Include="rttr\array_range.h" />

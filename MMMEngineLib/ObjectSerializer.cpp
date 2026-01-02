@@ -1,8 +1,8 @@
-#include "JsonSerializer.h"
+#include "ObjectSerializer.h"
 #include "rttr/registration"
 #include "Object.h"
 
-std::optional<json> MMMEngine::JsonSerializer::SerializeVariant(const variant& var)
+std::optional<json> MMMEngine::ObjectSerializer::SerializeVariant(const variant& var)
 {
 	rttr::type t = var.get_type();
 
@@ -43,7 +43,7 @@ std::optional<json> MMMEngine::JsonSerializer::SerializeVariant(const variant& v
 	return std::nullopt;
 }
 
-bool MMMEngine::JsonSerializer::DeserializeVariant(const json& j, variant& var)
+bool MMMEngine::ObjectSerializer::DeserializeVariant(const json& j, variant& var)
 {
 	rttr::type t = var.get_type();
 
@@ -112,7 +112,7 @@ bool MMMEngine::JsonSerializer::DeserializeVariant(const json& j, variant& var)
 }
 
 
-json MMMEngine::JsonSerializer::Serialize(const Object& obj)
+json MMMEngine::ObjectSerializer::Serialize(const Object& obj)
 {
 
 	nlohmann::json objJson;
@@ -135,7 +135,7 @@ json MMMEngine::JsonSerializer::Serialize(const Object& obj)
 	return objJson;
 }
 
-bool MMMEngine::JsonSerializer::Deserialize(const json& j, Object& obj)
+bool MMMEngine::ObjectSerializer::Deserialize(const json& j, Object& obj)
 {
 	if (!j.contains("properties") || !j["properties"].is_object())
 		return false;
