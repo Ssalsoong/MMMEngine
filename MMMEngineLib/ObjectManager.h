@@ -21,27 +21,7 @@ namespace MMMEngine
         std::queue<uint32_t> m_freePtrIDs;
         std::vector<uint32_t> m_pendingDestroy;
 
-        void ProcessPendingDestroy()
-        {
-            std::lock_guard<std::mutex> lock(m_mutex);
-            DestroyScope scope;
-
-            for (uint32_t ptrID : m_pendingDestroy)
-            {
-                if (ptrID >= m_objects.size())
-                    continue;
-
-                Object* obj = m_objects[ptrID];
-                if (!obj)
-                    continue;
-
-                delete obj;
-                m_objects[ptrID] = nullptr;
-                m_freePtrIDs.push(ptrID);
-            }
-
-            m_pendingDestroy.clear();
-        }
+        void ProcessPendingDestroy();
 
         // === ID로 핸들 복원 (직렬화용) ===
         template<typename T>
@@ -63,25 +43,12 @@ namespace MMMEngine
         }
 
         // === 디버깅 ===
-        size_t GetObjectCount() const
-        {
-            size_t count = 0;
-            for (const Object* obj : m_objects)
-                if (obj && !obj->IsDestroyed())
-                    count++;
-            return count;
-        }
+        size_t GetObjectCount() const;
 
     public:
-        bool IsCreatingObject() const
-        {
-            return m_isCreatingObject;
-        }
+        bool IsCreatingObject() const;
 
-        bool IsDestroyingObject() const 
-        { 
-            return m_isDestroyingObject; 
-        }
+        bool IsDestroyingObject() const;
 
         // RAII 스코프 -> Object 스택 생성 막기용
         class CreationScope
@@ -113,22 +80,7 @@ namespace MMMEngine
         };
 
         // === 유효성 검증 ===
-        bool IsValidPtr(uint32_t ptrID, uint32_t generation, const Object* ptr) const
-        {
-            if (ptrID >= m_objects.size())
-                return false;
-
-            if (m_objects[ptrID] != ptr)
-                return false;
-
-            if (m_ptrGenerations[ptrID] != generation)
-                return false;
-
-            if (ptr && ptr->IsDestroyed())
-                return false;
-
-            return true;
-        }
+        bool IsValidPtr(uint32_t ptrID, uint32_t generation, const Object* ptr) const;
 
         template<typename T, typename... Args>
         ObjectPtr<T> CreatePtr(Args&&... args)
@@ -177,17 +129,6 @@ namespace MMMEngine
         }
 
         ObjectManager() = default;
-        ~ObjectManager()
-        {
-            DestroyScope scope;
-            // 모든 객체 정리
-            for (Object* obj : m_objects)
-            {
-                if (obj)
-                {
-                    delete obj;
-                }
-            }
-        }
+        ~ObjectManager();
     };
 } 
