@@ -51,17 +51,25 @@ namespace MMMEngine
     
     class ObjectPtrBase
     {
+    private:
+        RTTR_ENABLE()
+        RTTR_REGISTRATION_FRIEND
     public:
         virtual Object* GetRaw() const = 0;
+        virtual bool IsValid() const = 0;
+        virtual uint32_t GetHandleID() const = 0;
+        virtual uint32_t GetGeneration() const = 0;
     };
 
     template<typename T>
-    class ObjectPtr : public ObjectPtrBase
+    class ObjectPtr final : public ObjectPtrBase
     {
     private:
+        RTTR_ENABLE(ObjectPtrBase)
+        RTTR_REGISTRATION_FRIEND
         friend class ObjectManager;
 
-        Object* GetRaw() const override { return m_ptr; }
+        virtual Object* GetRaw() const override { return m_ptr; }
 
         T* m_ptr = nullptr;
         uint32_t m_handleID = UINT32_MAX;
@@ -127,16 +135,14 @@ namespace MMMEngine
 
         explicit operator bool() const { return IsValid(); }
 
-        bool IsValid() const
+        virtual bool IsValid() const override
         {
             return ObjectManager::Get()->IsValidHandle(m_handleID, m_handleGeneration, m_ptr);
         }
 
-        uint32_t GetHandleID() const { return m_handleID; }
-        uint32_t GetGeneration() const { return m_handleGeneration; }
+        virtual uint32_t GetHandleID() const override { return m_handleID; }
+        virtual uint32_t GetGeneration() const override { return m_handleGeneration; }
     };
-
-
 }
 
 #include "Object.inl"

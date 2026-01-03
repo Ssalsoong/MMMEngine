@@ -10,12 +10,25 @@ uint64_t MMMEngine::Object::s_nextInstanceID = 1;
 RTTR_REGISTRATION
 {
 	using namespace rttr;
+	using namespace MMMEngine;
 
-	registration::class_<MMMEngine::Object>("Object")
-		.property("Name", &MMMEngine::Object::GetName, &MMMEngine::Object::SetName)
-		.property("GUID", &MMMEngine::Object::GetGUID, &MMMEngine::Object::SetGUID)
-		.property_readonly("InstanceID", &MMMEngine::Object::GetInstanceID)
-		.property_readonly("isDestroyed", &MMMEngine::Object::IsDestroyed);
+	registration::class_<Object>("Object")
+		.property("Name", &Object::GetName, &Object::SetName)
+		.property("GUID", &Object::GetGUID, &Object::SetGUID)
+		.property_readonly("InstanceID", &Object::GetInstanceID)
+		.property_readonly("isDestroyed", &Object::IsDestroyed);
+
+	registration::class_<ObjectPtrBase>("ObjectPtr")
+		.method("IsValid", &ObjectPtrBase::IsValid)
+		.method("Get", &ObjectPtrBase::GetRaw)
+		.method("GetHandleID", &ObjectPtrBase::GetHandleID)
+		.method("GetGeneration", &ObjectPtrBase::GetGeneration);
+
+	registration::class_<ObjectPtr<Object>>("ObjectPtr<Object>")
+		.constructor<>(
+			[]() {
+				return Object::CreateInstance<Object>();
+			}, registration::protected_access);
 }
 
 MMMEngine::Object::Object() : m_instanceID(s_nextInstanceID++)

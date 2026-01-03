@@ -133,7 +133,8 @@ namespace MMMEngine
         template<typename T, typename... Args>
         ObjectPtr<T> CreateHandle(Args&&... args)
         {
-            static_assert(std::is_base_of_v<Object, T>, "T must derive from Object");
+            static_assert(std::is_base_of_v<Object, T>, "T는 반드시 Object를 상속받아야 합니다.");
+            static_assert(!std::is_abstract_v<T>, "추상적인 Object는 만들 수 없습니다.");
 
             CreationScope scope(this);
 

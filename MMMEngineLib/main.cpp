@@ -67,5 +67,13 @@ int main()
 	auto FooObj = Object::CreateInstance<FooObject>();
 	FooObj->Foo();
 
+	type class_type = type::get_by_name("ObjectPtr<GameObject>");
+	if (class_type)
+	{
+		auto obj = class_type.create().get_value<ObjectPtr<GameObject>>();
+		std::cout << obj->GetName() << std::endl;
+	}
+	
+
 	return 0;
 }

@@ -6,6 +6,14 @@
 RTTR_REGISTRATION
 {
 	using namespace rttr;
+	using namespace MMMEngine;
 
-	registration::class_<MMMEngine::GameObject>("GameObject");
+	registration::class_<GameObject>("GameObject");
+
+	registration::class_<ObjectPtr<GameObject>>("ObjectPtr<GameObject>")
+        .constructor<>(
+			[]() {
+				return Object::CreateInstance<GameObject>();
+			}, registration::protected_access
+        );
 }
