@@ -37,7 +37,7 @@ MMMEngine::Object::Object() : m_instanceID(s_nextInstanceID++)
 	if (!ObjectManager::Get().IsCreatingObject())
 	{
 		throw std::runtime_error(
-			"Object는 ObjectManager/CreateInstance로만 생성할 수 있습니다.\n"
+			"Object는 CreatePtr로만 생성할 수 있습니다.\n"
 			"스택 생성이나 직접 new 사용이 감지되었습니다."
 		);
 	}
@@ -55,7 +55,7 @@ MMMEngine::Object::~Object()
 #ifdef _DEBUG
 		// Debug: 디버거 중단 + 스택 트레이스
 		std::cerr << "\n=== 오브젝트 파괴 오류 ===" << std::endl;
-		std::cerr << "Object는 ObjectManager/Destroy로만 파괴할 수 있습니다." << std::endl;
+		std::cerr << "Object는 Destroy로만 파괴할 수 있습니다." << std::endl;
 		std::cerr << "직접 delete 사용이 감지되었습니다." << std::endl;
 		std::cerr << "\n>>> 호출 스택 확인 <<<\n" << std::endl;
 		__debugbreak();
