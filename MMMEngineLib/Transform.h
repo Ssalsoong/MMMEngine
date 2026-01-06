@@ -11,7 +11,7 @@ namespace MMMEngine
 	class Transform : public Component
 	{
 	private:
-		RTTR_ENABLE(MMMEngine::Component)
+		RTTR_ENABLE(Component)
 		RTTR_REGISTRATION_FRIEND
 		friend class App;
 		friend class ObjectManager;
@@ -21,8 +21,10 @@ namespace MMMEngine
 		Quaternion m_localRotation;
 		Vector3 m_localScale;
 
-		mutable bool m_isMatrixDirty;
-		mutable Matrix m_cachedMatrix;
+		mutable bool m_isLocalMatDirty;
+		mutable bool m_isWorldMatDirty;
+		mutable Matrix m_cachedLocalMat;
+		mutable Matrix m_cachedWorldMat;
 
 		ObjectPtr<Transform> m_parent;
 		std::vector<ObjectPtr<Transform>> m_childs;
@@ -35,8 +37,8 @@ namespace MMMEngine
 	public:
 		virtual ~Transform();
 
-		Matrix& GetLocalMatrix() const;
-		Matrix GetWorldMatrix() const;
+		const Matrix& GetLocalMatrix() const;
+		const Matrix& GetWorldMatrix() const;
 
 		const Vector3& GetLocalPosition() const;
 		const Quaternion& GetLocalRotation() const;
@@ -47,6 +49,8 @@ namespace MMMEngine
 		const Quaternion GetWorldRotation() const;
 		const Vector3 GetWorldEulerRotation() const; // return degree (0 ~ 360)
 		const Vector3 GetWorldScale() const;
+
+		ObjectPtr<Transform> GetChild(size_t index);
 
 		void SetWorldPosition(Vector3 pos);
 		inline void SetWorldPosition(float x, float y, float z) { SetWorldPosition({ x,y,z }); }

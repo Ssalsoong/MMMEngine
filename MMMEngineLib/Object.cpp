@@ -4,6 +4,7 @@
 #include "ObjectManager.h"
 #include <stdexcept>
 #include <iostream>
+#include "Transform.h"
 
 uint64_t MMMEngine::Object::s_nextInstanceID = 1;
 
@@ -73,5 +74,13 @@ void MMMEngine::Object::DontDestroyOnLoad(const ObjectPtrBase& objPtr)
 
 void MMMEngine::Object::Destroy(const ObjectPtrBase& objPtr, float delay)
 {
+	if (ObjectManager::Get().GetPtr<Object>(objPtr.GetPtrID(), objPtr.GetPtrGeneration()).Cast<Transform>())
+	{
+#ifdef _DEBUG
+		assert(false && "Transform은 파괴할 수 없습니다.");
+#endif
+		return;
+	}
+
 	ObjectManager::Get().Destroy(objPtr, delay);
 }

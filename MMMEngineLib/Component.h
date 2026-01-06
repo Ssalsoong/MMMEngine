@@ -7,7 +7,7 @@ namespace MMMEngine
 	class Component : public Object
 	{
 	private:
-		RTTR_ENABLE(MMMEngine::Object)
+		RTTR_ENABLE(Object)
 		RTTR_REGISTRATION_FRIEND
 		friend class App;
 		friend class ObjectManager;

@@ -152,25 +152,23 @@ namespace MMMEngine
         }
 
         template<typename U>
+        ObjectPtr<U> Cast() const
+        {
+            if (U* casted = dynamic_cast<U*>(m_raw))
+            {
+                return ObjectManager::Get().GetPtrFast<U>(m_raw, m_ptrID, m_ptrGeneration);
+            }
+            
+            return ObjectPtr<U>();
+        }
+
+        template<typename U>
         ObjectPtr<U> As() const
         {
             static_assert(std::is_base_of_v<Object, U>,
-                "As<T>()의 T는 Object를 상속해야 합니다.");
+                "As<T>() : T는 Object를 상속받아야 합니다.");
 
-            // null 핸들
-            if (m_ptrID == UINT32_MAX)
-                return {};
-
-            // 세대/ID 유효성
-            if (!IsValid())
-                return {};
-
-            // 런타임 타입 검사
-            U* casted = dynamic_cast<U*>(m_raw);
-            if (!casted)
-                return {};
-
-            return ObjectPtr<U>(casted, m_ptrID, m_ptrGeneration);
+            return ObjectManager::Get().GetPtr<U>(m_ptrID, m_ptrGeneration);
         }
 
         T& operator*() const 

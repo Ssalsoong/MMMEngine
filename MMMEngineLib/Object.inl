@@ -48,7 +48,7 @@ namespace MMMEngine
     template<typename T>
     ObjectPtr<T> Object::SelfPtr(T* self)
     {
-#ifndef NDEBUG
+#ifdef _DEBUG
         static_assert(std::is_base_of_v<Object, T>, "SelfPtr<T> : T는 Object를 상속받아야합니다.");
         assert(static_cast<Object*>(self) == this && "SelfPtr의 인자가 자신이 아닙니다!");
 #endif

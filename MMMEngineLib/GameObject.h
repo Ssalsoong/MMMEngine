@@ -10,7 +10,7 @@ namespace MMMEngine
 	class GameObject : public Object
 	{
 	private:
-		RTTR_ENABLE(MMMEngine::Object)
+		RTTR_ENABLE(Object)
 		RTTR_REGISTRATION_FRIEND
 		ObjectPtr<Transform> m_transform;
 		std::vector<ObjectPtr<Component>> m_components;

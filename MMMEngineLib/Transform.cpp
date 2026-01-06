@@ -17,30 +17,26 @@ RTTR_REGISTRATION
 
 void MMMEngine::Transform::AddChild(ObjectPtr<Transform> child)
 {
-	if (child == nullptr || child == SelfPtr(this)) return; // 자기 자신이나 nullptr은 추가하지 않음
-	// 이미 자식으로 등록되어 있는지 확인
-	for (const auto& existingChild : m_childs)
+	for (const auto& c : m_childs)
 	{
-		if (existingChild == child) return; // 이미 자식으로 등록되어 있으면 추가하지 않음
+		if (c == child)
+			return;
 	}
+
 	m_childs.push_back(child);
-	child->m_parent = SelfPtr(this); // 부모 설정
 }
 
 void MMMEngine::Transform::RemoveChild(ObjectPtr<Transform> child)
 {
-	if (child == nullptr) return; // nullptr은 제거하지 않음
 	auto it = std::find(m_childs.begin(), m_childs.end(), child);
 	if (it != m_childs.end())
-	{
-		m_childs.erase(it); // 자식 목록에서 제거
-		child->m_parent = nullptr; // 부모 설정 해제
-	}
+		m_childs.erase(it);
 }
 
 void MMMEngine::Transform::MarkDirty()
 {
-	m_isMatrixDirty = true;
+	m_isLocalMatDirty = true;
+	m_isWorldMatDirty = true;
 	for (const auto& child : m_childs)
 	{
 		child->MarkDirty(); // 자식들도 더러워졌다고 표시
@@ -52,45 +48,51 @@ MMMEngine::Transform::Transform()
 	, m_localRotation(0.0f, 0.0f, 0.0f, 1.0f)
 	, m_localScale(1.0f, 1.0f, 1.0f)
 	, m_parent()
-	, m_isMatrixDirty(true)
-	, m_cachedMatrix(Matrix::Identity)
+	, m_isLocalMatDirty(true)
+	, m_isWorldMatDirty(true)
+	, m_cachedLocalMat(Matrix::Identity)
+	, m_cachedWorldMat(Matrix::Identity)
 {
 
 }
 
 MMMEngine::Transform::~Transform()
 {
-	if (!m_childs.empty())
+	while (!m_childs.empty())
 	{
-		for (const auto& child : m_childs)
-		{
-			child->SetParent(nullptr);
-		}
+		auto child = m_childs.back();
+		child->SetParent(nullptr);
 	}
 	SetParent(nullptr);
 }
 
-Matrix& MMMEngine::Transform::GetLocalMatrix() const
+const Matrix& MMMEngine::Transform::GetLocalMatrix() const
 {
-	if (m_isMatrixDirty)
+	if (m_isLocalMatDirty)
 	{
-		m_cachedMatrix =
+		m_cachedLocalMat =
 			Matrix::CreateScale(m_localScale) *
 			Matrix::CreateFromQuaternion(m_localRotation) *
 			Matrix::CreateTranslation(m_localPosition);
 
-		m_isMatrixDirty = false;
+		m_isLocalMatDirty = false;
 	}
 
-	return m_cachedMatrix;
+	return m_cachedLocalMat;
 }
 
-Matrix MMMEngine::Transform::GetWorldMatrix() const
+const Matrix& MMMEngine::Transform::GetWorldMatrix() const
 {
-	if (m_parent)
-		return GetLocalMatrix() * m_parent->GetWorldMatrix();
-	else
-		return GetLocalMatrix();
+	if (m_isWorldMatDirty)
+	{
+		if (m_parent)
+			m_cachedWorldMat = GetLocalMatrix() * m_parent->GetWorldMatrix();
+		else
+			m_cachedWorldMat = GetLocalMatrix();
+
+		m_isWorldMatDirty = false;
+	}
+	return m_cachedWorldMat;
 }
 
 const Vector3& MMMEngine::Transform::GetLocalPosition() const
@@ -166,6 +168,15 @@ const Vector3 MMMEngine::Transform::GetWorldScale() const
 	return m_localScale;
 }
 
+MMMEngine::ObjectPtr<MMMEngine::Transform> MMMEngine::Transform::GetChild(size_t index)
+{
+	//out of index
+	if (index >= m_childs.size())
+		return ObjectPtr<Transform>();
+
+	return m_childs[index];
+}
+
 void MMMEngine::Transform::SetWorldPosition(Vector3 pos)
 {
 	if (!m_parent)
@@ -202,7 +213,7 @@ void MMMEngine::Transform::SetWorldRotation(Quaternion rot)
 	{
 		Quaternion parentInvQuater = Quaternion::Identity;
 		m_parent->GetWorldRotation().Inverse(parentInvQuater);
-
+		m_parent->onMatrixUpdate.Invoke(&(*m_parent));
 		m_localRotation = parentInvQuater * rot;
 	}
 	else
@@ -265,7 +276,13 @@ void MMMEngine::Transform::SetLocalRotation(Quaternion rot)
 void MMMEngine::Transform::SetParent(ObjectPtr<Transform> parent, bool worldPositionStays)
 {
 	// 이미 같은 부모면 return
-	if (m_parent == parent) return;
+	if (parent == m_parent) return;
+
+	for (auto p = parent; p != nullptr; p = p->m_parent)
+	{
+		if (p == SelfPtr(this))
+			return; // cycle 거부
+	}
 
 	// 현재 월드 포지션 백업
 	const auto worldScaleBefore = GetWorldScale();
@@ -275,7 +292,6 @@ void MMMEngine::Transform::SetParent(ObjectPtr<Transform> parent, bool worldPosi
 	// 기존 부모에서 제거
 	if (m_parent)
 		m_parent->RemoveChild(SelfPtr(this));
-
 
 	// 부모 교체
 	m_parent = parent;
