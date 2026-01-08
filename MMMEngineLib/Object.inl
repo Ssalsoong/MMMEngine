@@ -5,20 +5,20 @@
 namespace MMMEngine
 {
     template<typename T, typename... Args>
-    ObjectPtr<T> Object::CreatePtr(Args&&... args)
+    ObjPtr<T> Object::NewObject(Args&&... args)
     {
         return ObjectManager::Get()
-            .CreatePtr<T>(std::forward<Args>(args)...);
+            .NewObject<T>(std::forward<Args>(args)...);
     }
 
     template<typename T>
-    bool ObjectPtr<T>::IsValid() const
+    bool ObjPtr<T>::IsValid() const
     {
         return ObjectManager::Get().IsValidPtr(m_ptrID, m_ptrGeneration, m_raw);
     }
 
     template<typename T>
-    bool ObjectPtr<T>::IsSameObject(const ObjectPtrBase& other) const
+    bool ObjPtr<T>::IsSameObject(const ObjPtrBase& other) const
     {
         if (m_ptrID != other.GetPtrID() ||
             m_ptrGeneration != other.GetPtrGeneration())
@@ -34,19 +34,19 @@ namespace MMMEngine
 
 
     template<typename T>
-    ObjectPtr<T> Object::FindObjectByType()
+    ObjPtr<T> Object::FindObjectByType()
     {
         return ObjectManager::Get().FindObjectByType<T>();
     }
 
     template<typename T>
-    std::vector<ObjectPtr<T>> Object::FindObjectsByType()
+    std::vector<ObjPtr<T>> Object::FindObjectsByType()
     {
         return ObjectManager::Get().FindObjectsByType<T>();
     }
 
     template<typename T>
-    ObjectPtr<T> Object::SelfPtr(T* self)
+    ObjPtr<T> Object::SelfPtr(T* self)
     {
 #ifdef _DEBUG
         static_assert(std::is_base_of_v<Object, T>, "SelfPtr<T> : T는 Object를 상속받아야합니다.");

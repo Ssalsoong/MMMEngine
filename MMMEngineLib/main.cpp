@@ -28,12 +28,12 @@ class RollObject;
 class FooObject : public Object
 {
 public:
-	ObjectPtr<RollObject> pRollObj;
+	ObjPtr<RollObject> pRollObj;
 	void Foo()
 	{
 		pRollObj = FindObjectByType<RollObject>();
 
-		auto inst = CreatePtr<GameObject>();
+		auto inst = NewObject<GameObject>();
 		if (inst)
 		{
 			std::cout << GetName() << std::endl;
@@ -77,16 +77,16 @@ int main()
 	type::invoke("f", {});
 
 	std::cout << "Generated GUID: " << id.ToString() << std::endl;
-	auto FooObj = Object::CreatePtr<FooObject>();
+	auto FooObj = Object::NewObject<FooObject>();
 	FooObj->Foo();
 
-	auto go = Object::CreatePtr<GameObject>();
-	auto ptrType = "ObjectPtr<" + (*go).get_type().get_name().to_string() + ">";
+	auto go = Object::NewObject<GameObject>();
+	auto ptrType = "ObjPtr<" + (*go).get_type().get_name().to_string() + ">";
 
 	type class_type = type::get_by_name(ptrType);
 	if (class_type)
 	{
-		auto obj = class_type.create({ std::string{"overload"} }).get_value<ObjectPtr<GameObject>>();
+		auto obj = class_type.create({ std::string{"overload"} }).get_value<ObjPtr<GameObject>>();
 		std::cout << obj->GetName() << std::endl;
 
 		std::cout << (*obj).GetGUID() << std::endl;
@@ -101,7 +101,7 @@ int main()
 
 	auto s = go.get_type().get_name().to_string();
 
-	auto a = Object::CreatePtr<RollObject>();
+	auto a = Object::NewObject<RollObject>();
 	if(a) // È¤Àº a.IsValid()
 		a->A();
 	auto s2 = a.Cast<Object>()->GetName();

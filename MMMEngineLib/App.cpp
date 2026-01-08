@@ -18,7 +18,14 @@ bool MMMEngine::App::Initialize()
 
 void MMMEngine::App::Run()
 {
-	onRender(this);
+	m_isRunning = true;
+	onIntialize(this);
+	while (m_isRunning)
+	{
+		onUpdate(this);
+		onRender(this);
+	}
+	onShutdown(this);
 }
 
 void MMMEngine::App::Shutdown()

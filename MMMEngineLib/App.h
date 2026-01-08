@@ -27,8 +27,14 @@ namespace MMMEngine
 		HINSTANCE m_hInstance;
 		HWND m_hWnd;
 		std::wstring m_windowTitle;
+		bool m_isRunning;
 
 		bool CreateMainWindow();
 		static LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	};
+
+	class AppState
+	{
+
 	};
 }

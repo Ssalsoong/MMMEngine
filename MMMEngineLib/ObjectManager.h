@@ -73,33 +73,33 @@ namespace MMMEngine
 
         // SelfPtr<T>의 빠른 구현을 위한 함수, 절대 외부 호출하지 말 것
         template<typename T>
-        ObjectPtr<T> GetPtrFast(Object* raw, uint32_t ptrID, uint32_t ptrGen)
+        ObjPtr<T> GetPtrFast(Object* raw, uint32_t ptrID, uint32_t ptrGen)
         {
-            return ObjectPtr<T>(static_cast<T*>(raw), ptrID, ptrGen);
+            return ObjPtr<T>(static_cast<T*>(raw), ptrID, ptrGen);
         }
 
         template<typename T>
-        ObjectPtr<T> GetPtr(uint32_t ptrID, uint32_t ptrGen)
+        ObjPtr<T> GetPtr(uint32_t ptrID, uint32_t ptrGen)
         {
             if (ptrID >= m_objectPtrInfos.size())
-                return ObjectPtr<T>();
+                return ObjPtr<T>();
 
             Object* obj = m_objectPtrInfos[ptrID].raw;
             if (!obj || obj->IsDestroyed())
-                return ObjectPtr<T>();
+                return ObjPtr<T>();
 
 #ifndef NDEBUG
             T* typedObj = dynamic_cast<T*>(obj);
             assert(typedObj && "GetPtr<T>: 타입 불일치! ptrID에 들어있는 실제 타입을 확인하세요.");
 #endif
             if(m_objectPtrInfos[ptrID].ptrGenerations != ptrGen)
-                return ObjectPtr<T>();
+                return ObjPtr<T>();
 
-            return ObjectPtr<T>(static_cast<T*>(obj), ptrID, ptrGen);
+            return ObjPtr<T>(static_cast<T*>(obj), ptrID, ptrGen);
         }
 
         template<typename T>
-        ObjectPtr<T> FindObjectByType()
+        ObjPtr<T> FindObjectByType()
         {
             for (uint32_t i = 0; i < m_objectPtrInfos.size(); ++i)
             {
@@ -110,17 +110,17 @@ namespace MMMEngine
                 auto obj = info.raw;
                 if (T* castedObj = dynamic_cast<T*>(obj))
                 {
-                    return ObjectPtr<T>(castedObj, i, info.ptrGenerations);
+                    return ObjPtr<T>(castedObj, i, info.ptrGenerations);
                 }
             }
 
-            return ObjectPtr<T>();
+            return ObjPtr<T>();
         }
 
         template<typename T>
-        std::vector<ObjectPtr<T>> FindObjectsByType()
+        std::vector<ObjPtr<T>> FindObjectsByType()
         {
-            std::vector<ObjectPtr<T>> objects;
+            std::vector<ObjPtr<T>> objects;
 
             for (uint32_t i = 0; i < m_objectPtrInfos.size(); ++i)
             {
@@ -131,7 +131,7 @@ namespace MMMEngine
                 auto obj = info.raw;
                 if (T* castedObj = dynamic_cast<T*>(obj))
                 {
-                    objects.emplace_back(ObjectPtr<T>(castedObj, i, info.ptrGenerations));
+                    objects.emplace_back(ObjPtr<T>(castedObj, i, info.ptrGenerations));
                 }
             }
 
@@ -139,7 +139,7 @@ namespace MMMEngine
         }
 
         template<typename T, typename... Args>
-        ObjectPtr<T> CreatePtr(Args&&... args)
+        ObjPtr<T> NewObject(Args&&... args)
         {
             static_assert(std::is_base_of_v<Object, T>, "T는 반드시 Object를 상속받아야 합니다.");
             static_assert(!std::is_abstract_v<T>, "추상적인 Object는 만들 수 없습니다.");
@@ -168,10 +168,10 @@ namespace MMMEngine
             auto baseObj = static_cast<Object*>(newObj);
             baseObj->m_ptrID = ptrID;
             baseObj->m_ptrGen = ptrGen;
-            return ObjectPtr<T>(newObj, ptrID, ptrGen);
+            return ObjPtr<T>(newObj, ptrID, ptrGen);
         }
 
-        void Destroy(const ObjectPtrBase& objPtr, float delayTime = 0.0f);
+        void Destroy(const ObjPtrBase& objPtr, float delayTime = 0.0f);
 
         ObjectManager() = default;
         ~ObjectManager();

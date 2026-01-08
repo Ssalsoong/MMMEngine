@@ -15,11 +15,12 @@ namespace MMMEngine
 		friend class App;
 		friend class ObjectManager;
 		friend class Scene;
+		friend class Component;
 
 		//SceneRef m_scene;
 
-		ObjectPtr<Transform> m_transform;
-		std::vector<ObjectPtr<Component>> m_components;
+		ObjPtr<Transform> m_transform;
+		std::vector<ObjPtr<Component>> m_components;
 
 		std::string m_tag = "";
 		uint32_t m_layer = static_cast<uint32_t>(-1);
@@ -27,8 +28,8 @@ namespace MMMEngine
 		bool m_active = true;
 		bool m_activeInHierarchy = true; // Hierarchy에서 활성화 여부
 
-		void RegisterComponent(ObjectPtr<Component> comp);
-		void UnRegisterComponent(ObjectPtr<Component> comp);
+		void RegisterComponent(ObjPtr<Component> comp);
+		void UnRegisterComponent(ObjPtr<Component> comp);
 		void UpdateActiveInHierarchy();
 		void Initialize();
 	protected:
@@ -50,12 +51,12 @@ namespace MMMEngine
 		//const SceneRef		GetScene(	const { return m_scene; }
 
 		template <typename T>
-		ObjectPtr<T> AddComponent()
+		ObjPtr<T> AddComponent()
 		{
 			static_assert(!std::is_same_v<T, Transform>, "Transform은 Addcomponent로 생성할 수 없습니다.");
 			static_assert(std::is_base_of_v<Component, T>, "T는 Component를 상속받아야 합니다.");
 
-			auto newComponent = Object::CreatePtr<T>();
+			auto newComponent = Object::NewObject<T>();
 			newComponent->m_gameObject = SelfPtr(this);
 			RegisterComponent(newComponent);
 
@@ -71,7 +72,7 @@ namespace MMMEngine
 		}
 
 		template <typename T>
-		ObjectPtr<T> GetComponent()
+		ObjPtr<T> GetComponent()
 		{
 			static_assert(std::is_base_of<Component, T>::value, "GetComponent()의 T는 Component를 상속받아야 합니다.");
 
@@ -84,12 +85,12 @@ namespace MMMEngine
 			return nullptr;
 		}
 
-		const std::vector<ObjectPtr<Component>>& GetAllComponents() const { return m_components; }
+		const std::vector<ObjPtr<Component>>& GetAllComponents() const { return m_components; }
 
-		ObjectPtr<Transform> GetTransform() { return m_transform; }
+		ObjPtr<Transform> GetTransform() { return m_transform; }
 
-		//static ObjectPtr<GameObject> Find(const std::wstring& name);
-		//static ObjectPtr<GameObject> FindWithTag(const std::string& name);
-		//static std::vector<ObjectPtr<GameObject>> FindGameObjectsWithTag(const std::string& name);
+		//static ObjPtr<GameObject> Find(const std::wstring& name);
+		//static ObjPtr<GameObject> FindWithTag(const std::string& name);
+		//static std::vector<ObjPtr<GameObject>> FindGameObjectsWithTag(const std::string& name);
 	};
 }

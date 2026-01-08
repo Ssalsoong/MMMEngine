@@ -18,14 +18,14 @@ RTTR_REGISTRATION
 		.property("Roation", &Transform::GetLocalRotation, setrot)
 		.property("Scale", &Transform::GetLocalScale, setscale);
 
-	registration::class_<ObjectPtr<Transform>>("ObjectPtr<Transform>")
+	registration::class_<ObjPtr<Transform>>("ObjPtr<Transform>")
 		.constructor<>(
 			[]() {
-				return Object::CreatePtr<Transform>();
+				return Object::NewObject<Transform>();
 			});
 }
 
-void MMMEngine::Transform::AddChild(ObjectPtr<Transform> child)
+void MMMEngine::Transform::AddChild(ObjPtr<Transform> child)
 {
 	for (const auto& c : m_childs)
 	{
@@ -36,7 +36,7 @@ void MMMEngine::Transform::AddChild(ObjectPtr<Transform> child)
 	m_childs.push_back(child);
 }
 
-void MMMEngine::Transform::RemoveChild(ObjectPtr<Transform> child)
+void MMMEngine::Transform::RemoveChild(ObjPtr<Transform> child)
 {
 	auto it = std::find(m_childs.begin(), m_childs.end(), child);
 	if (it != m_childs.end())
@@ -174,16 +174,16 @@ const Vector3 MMMEngine::Transform::GetWorldScale() const
 	return m_localScale;
 }
 
-MMMEngine::ObjectPtr<MMMEngine::Transform> MMMEngine::Transform::GetParent() const
+MMMEngine::ObjPtr<MMMEngine::Transform> MMMEngine::Transform::GetParent() const
 {
 	return m_parent;
 }
 
-MMMEngine::ObjectPtr<MMMEngine::Transform> MMMEngine::Transform::GetChild(size_t index) const
+MMMEngine::ObjPtr<MMMEngine::Transform> MMMEngine::Transform::GetChild(size_t index) const
 {
 	//out of index
 	if (index >= m_childs.size())
-		return ObjectPtr<Transform>();
+		return ObjPtr<Transform>();
 
 	return m_childs[index];
 }
@@ -291,7 +291,7 @@ void MMMEngine::Transform::SetLocalScale(const Vector3& scale)
 	onMatrixUpdate.Invoke(this);
 }
 
-void MMMEngine::Transform::SetParent(ObjectPtr<Transform> parent, bool worldPositionStays)
+void MMMEngine::Transform::SetParent(ObjPtr<Transform> parent, bool worldPositionStays)
 {
 	// 이미 같은 부모면 return
 	if (parent == m_parent) return;
@@ -364,7 +364,7 @@ void MMMEngine::Transform::SetParent(ObjectPtr<Transform> parent, bool worldPosi
 	onMatrixUpdate.Invoke(this);  //GetGameObject()->UpdateActiveInHierarchy(); // 부모가 바뀌었으므로 Hierarchy 활성화 상태 업데이트
 }
 
-MMMEngine::ObjectPtr<MMMEngine::Transform> MMMEngine::Transform::Find(const std::string& path)
+MMMEngine::ObjPtr<MMMEngine::Transform> MMMEngine::Transform::Find(const std::string& path)
 {
 	if (path.empty())
 		return nullptr;
@@ -396,14 +396,14 @@ MMMEngine::ObjectPtr<MMMEngine::Transform> MMMEngine::Transform::Find(const std:
 		if (!found)
 		{
 			// 현재 레벨에서 이름을 못 찾으면 경로 실패
-			return ObjectPtr<Transform>();
+			return ObjPtr<Transform>();
 		}
 	}
 
 	return current;
 }
 
-MMMEngine::ObjectPtr<MMMEngine::Transform> MMMEngine::Transform::GetRoot()
+MMMEngine::ObjPtr<MMMEngine::Transform> MMMEngine::Transform::GetRoot()
 {
 	auto current = SelfPtr(this);
 
@@ -419,7 +419,7 @@ MMMEngine::ObjectPtr<MMMEngine::Transform> MMMEngine::Transform::GetRoot()
 
 void MMMEngine::Transform::DetachChildren()
 {
-	std::vector<ObjectPtr<Transform>> childrenCopy = m_childs;
+	std::vector<ObjPtr<Transform>> childrenCopy = m_childs;
 
 	for (auto& child : childrenCopy)
 	{

@@ -95,7 +95,7 @@ bool MMMEngine::ObjectManager::IsValidPtr(uint32_t ptrID, uint32_t generation, c
     return true;
 }
 
-void MMMEngine::ObjectManager::Destroy(const ObjectPtrBase& objPtr, float delayTime)
+void MMMEngine::ObjectManager::Destroy(const ObjPtrBase& objPtr, float delayTime)
 {
     if (!objPtr.IsValid())
         return;

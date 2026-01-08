@@ -15,23 +15,23 @@ RTTR_REGISTRATION
 		.property("Layer", &GameObject::GetLayer, &GameObject::SetLayer)
 		.property("Tag", &GameObject::GetTag, &GameObject::SetTag);
 
-	registration::class_<ObjectPtr<GameObject>>("ObjectPtr<GameObject>")
+	registration::class_<ObjPtr<GameObject>>("ObjPtr<GameObject>")
 		.constructor(
    			[](const std::string& name) {
-   				return Object::CreatePtr<GameObject>(name);
+   				return Object::NewObject<GameObject>(name);
    			})
    	    .constructor<>(
    		    []() {
-   			    return Object::CreatePtr<GameObject>();
+   			    return Object::NewObject<GameObject>();
    		    });
 }
 
-void MMMEngine::GameObject::RegisterComponent(ObjectPtr<Component> comp)
+void MMMEngine::GameObject::RegisterComponent(ObjPtr<Component> comp)
 {
     m_components.push_back(comp);
 }
 
-void MMMEngine::GameObject::UnRegisterComponent(ObjectPtr<Component> comp)
+void MMMEngine::GameObject::UnRegisterComponent(ObjPtr<Component> comp)
 {
     auto it = std::find(m_components.begin(), m_components.end(), comp);
     if (it != m_components.end()) {
@@ -43,7 +43,7 @@ void MMMEngine::GameObject::UnRegisterComponent(ObjectPtr<Component> comp)
 void MMMEngine::GameObject::Initialize()
 {
 	//transform은 직접 생성 후 m_components에 등록
-	m_transform = CreatePtr<Transform>();
+	m_transform = NewObject<Transform>();
 	m_transform->SetGameObject(SelfPtr(this));
 	m_transform->SetParent(nullptr); // 부모가 없으므로 nullptr로 설정
 
@@ -90,6 +90,9 @@ MMMEngine::GameObject::GameObject(std::string name)
 void MMMEngine::GameObject::BeforeDestroy()
 {
 	ObjectManager::Get().Destroy(m_transform);
+	m_transform = nullptr;
+	for (const auto& comp : m_components)
+		Destroy(comp);
 }
 
 void MMMEngine::GameObject::SetActive(bool active)

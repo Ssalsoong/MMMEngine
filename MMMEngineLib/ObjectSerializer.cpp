@@ -42,8 +42,8 @@ std::optional<json> MMMEngine::ObjectSerializer::SerializeVariant(const variant&
 {
     rttr::type t = var.get_type();
 
-    // ObjectPtr<T> -> 타입명 + GUID만 저장
-    if (t.is_derived_from<ObjectPtrBase>())
+    // ObjPtr<T> -> 타입명 + GUID만 저장
+    if (t.is_derived_from<ObjPtrBase>())
     {
         return SerializeObjectPtr(var);
     }
@@ -99,7 +99,7 @@ std::optional<json> MMMEngine::ObjectSerializer::SerializeObjectPtr(const varian
     json j = json::object();
 
     rttr::type ptrType = var.get_type();
-    j["__type"] = ptrType.get_name().to_string();  // "ObjectPtr<GameObject>" 등
+    j["__type"] = ptrType.get_name().to_string();  // "ObjPtr<GameObject>" 등
 
     // IsValid() 체크
     auto isValidMethod = ptrType.get_method("IsValid");
@@ -213,8 +213,8 @@ bool MMMEngine::ObjectSerializer::DeserializeVariant(const json& j, variant& var
 {
     rttr::type t = var.get_type();
 
-    // ObjectPtr<T> -> null ObjectPtr만 생성 (GUID는 무시)
-    if (t.is_derived_from<ObjectPtrBase>())
+    // ObjPtr<T> -> null ObjectPtr만 생성 (GUID는 무시)
+    if (t.is_derived_from<ObjPtrBase>())
     {
         return DeserializeObjectPtr(j, var);
     }
@@ -296,7 +296,7 @@ bool MMMEngine::ObjectSerializer::DeserializeObjectPtr(const json& j, variant& v
     if (!j.is_object() || !j.contains("__type"))
         return false;
 
-    // null ObjectPtr 생성 (나중에 SceneSerializer가 연결)
+    // null ObjPtr 생성 (나중에 SceneSerializer가 연결)
     rttr::type ptrType = var.get_type();
     variant nullPtr = ptrType.create();
     var = nullPtr;

@@ -20,16 +20,16 @@ RTTR_REGISTRATION
 		.property_readonly("InstanceID", &Object::GetInstanceID)
 		.property_readonly("isDestroyed", &Object::IsDestroyed);
 
-	registration::class_<ObjectPtrBase>("ObjectPtr")
-		.method("IsValid", &ObjectPtrBase::IsValid)
-		.method("GetRaw", &ObjectPtrBase::GetRaw, registration::private_access)
-		.method("GetPtrID", &ObjectPtrBase::GetPtrID)
-		.method("GetPtrGeneration", &ObjectPtrBase::GetPtrGeneration);
+	registration::class_<ObjPtrBase>("ObjPtr")
+		.method("IsValid", &ObjPtrBase::IsValid)
+		.method("GetRaw", &ObjPtrBase::GetRaw, registration::private_access)
+		.method("GetPtrID", &ObjPtrBase::GetPtrID)
+		.method("GetPtrGeneration", &ObjPtrBase::GetPtrGeneration);
 
-	registration::class_<ObjectPtr<Object>>("ObjectPtr<Object>")
+	registration::class_<ObjPtr<Object>>("ObjPtr<Object>")
 		.constructor<>(
 			[]() { 
-				return Object::CreatePtr<Object>(); 
+				return Object::NewObject<Object>(); 
 			});
 }
 
@@ -67,12 +67,12 @@ MMMEngine::Object::~Object()
 	}
 }
 
-void MMMEngine::Object::DontDestroyOnLoad(const ObjectPtrBase& objPtr)
+void MMMEngine::Object::DontDestroyOnLoad(const ObjPtrBase& objPtr)
 {
 
 }
 
-void MMMEngine::Object::Destroy(const ObjectPtrBase& objPtr, float delay)
+void MMMEngine::Object::Destroy(const ObjPtrBase& objPtr, float delay)
 {
 	if (ObjectManager::Get().GetPtr<Object>(objPtr.GetPtrID(), objPtr.GetPtrGeneration()).Cast<Transform>())
 	{

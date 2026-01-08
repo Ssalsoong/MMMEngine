@@ -21,10 +21,10 @@ namespace MMMEngine
         bool DeserializeSequentialContainer(const json& j, variant& containerVar);
 
     public:
-        // Object 하나를 직렬화 (ObjectPtr<T>를 variant로 받음)
+        // Object 하나를 직렬화 (ObjPtr<T>를 variant로 받음)
         json Serialize(const variant& objectHandle);
 
-        // Object 하나를 역직렬화 (ObjectPtr 참조는 GUID로만 남겨둠)
+        // Object 하나를 역직렬화 (ObjPtr 참조는 GUID로만 남겨둠)
         bool Deserialize(const json& j, const variant& objectHandle);
     };
 }

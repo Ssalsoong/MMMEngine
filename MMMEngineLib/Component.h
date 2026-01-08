@@ -13,15 +13,15 @@ namespace MMMEngine
 		friend class ObjectManager;
 		friend class GameObject;
 
-		ObjectPtr<GameObject> m_gameObject;
-		inline void SetGameObject(ObjectPtr<GameObject> owner) { m_gameObject = owner; }
+		ObjPtr<GameObject> m_gameObject;
+		inline void SetGameObject(ObjPtr<GameObject> owner) { m_gameObject = owner; }
 	protected:
 		Component() = default;
 		virtual void Initialize() {};
-		virtual void BeforeDestroy() override {};
+		virtual void BeforeDestroy() override;
 	public:
 		virtual ~Component() = default;
 
-		inline ObjectPtr<GameObject> GetGameObject() { return m_gameObject; };
+		inline ObjPtr<GameObject> GetGameObject() { return m_gameObject; };
 	};
 }

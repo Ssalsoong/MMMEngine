@@ -26,11 +26,11 @@ namespace MMMEngine
 		mutable Matrix m_cachedLocalMat;
 		mutable Matrix m_cachedWorldMat;
 
-		ObjectPtr<Transform> m_parent;
-		std::vector<ObjectPtr<Transform>> m_childs;
+		ObjPtr<Transform> m_parent;
+		std::vector<ObjPtr<Transform>> m_childs;
 
-		void AddChild(ObjectPtr<Transform> child);
-		void RemoveChild(ObjectPtr<Transform> child);
+		void AddChild(ObjPtr<Transform> child);
+		void RemoveChild(ObjPtr<Transform> child);
 		void MarkDirty();
 	protected:
 		Transform();
@@ -75,14 +75,13 @@ namespace MMMEngine
 		void SetLocalScale(const Vector3& scale);
 		inline void SetLocalScale(float x, float y, float z) { SetLocalScale({ x,y,z }); }
 
-		ObjectPtr<Transform> GetParent() const;
-		ObjectPtr<Transform> GetChild(size_t index) const;
+		ObjPtr<Transform> GetParent() const;
+		ObjPtr<Transform> GetChild(size_t index) const;
 
-		void SetParent(ObjectPtr<Transform> parent, bool worldPositionStays = true);
+		void SetParent(ObjPtr<Transform> parent, bool worldPositionStays = true);
 
-		// TODO : 나중에 Sibling 관련 함수를 모두 제작해야 함
-		ObjectPtr<Transform> Find(const std::string& path);
-		ObjectPtr<Transform> GetRoot();
+		ObjPtr<Transform> Find(const std::string& path);
+		ObjPtr<Transform> GetRoot();
 		void DetachChildren();
 
 		virtual void SetSiblingIndex(size_t idx);

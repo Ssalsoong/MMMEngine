@@ -17,8 +17,8 @@ namespace MMMEngine
         friend class ObjectSerializer;
 
 		template<typename T>
-		friend class ObjectPtr;
-        friend class ObjectPtrBase;
+		friend class ObjPtr;
+        friend class ObjPtrBase;
 		
 		static uint64_t s_nextInstanceID;
 
@@ -37,25 +37,25 @@ namespace MMMEngine
         virtual ~Object();
 
         template<typename T>
-        ObjectPtr<T> SelfPtr(T* self);
+        ObjPtr<T> SelfPtr(T* self);
 
         virtual void BeforeDestroy() {};
 	public:
 		Object(const Object&) = delete;
 		Object& operator=(const Object&) = delete;
 
-		template<typename T, typename ...Args>
-        static ObjectPtr<T> CreatePtr(Args && ...args);
+		template<typename T = Object, typename ...Args>
+        static ObjPtr<T> NewObject(Args && ...args);
 
         template<typename T>
-        static ObjectPtr<T> FindObjectByType();
+        static ObjPtr<T> FindObjectByType();
 
         template<typename T>
-        static std::vector<ObjectPtr<T>> FindObjectsByType();
+        static std::vector<ObjPtr<T>> FindObjectsByType();
 
-        static void DontDestroyOnLoad(const ObjectPtrBase& objPtr);
+        static void DontDestroyOnLoad(const ObjPtrBase& objPtr);
 
-		static void Destroy(const ObjectPtrBase& objPtr, float delay = 0.0f);
+		static void Destroy(const ObjPtrBase& objPtr, float delay = 0.0f);
 
 		inline uint64_t				GetInstanceID() const { return m_instanceID; }
 
@@ -67,13 +67,13 @@ namespace MMMEngine
 		inline const bool&			IsDestroyed()	const { return m_isDestroyed; }
 	};
     
-    class ObjectPtrBase
+    class ObjPtrBase
     {
     private:
         RTTR_ENABLE()
         RTTR_REGISTRATION_FRIEND
         template<typename T>
-        friend class ObjectPtr;
+        friend class ObjPtr;
         friend class ObjectManager;
         friend class ObjectSerializer;
 
@@ -84,21 +84,21 @@ namespace MMMEngine
         virtual uint32_t    GetPtrGeneration() const = 0;
         virtual bool        IsValid() const = 0;
         
-        virtual bool IsSameObject(const ObjectPtrBase& other) const = 0;
+        virtual bool IsSameObject(const ObjPtrBase& other) const = 0;
 
-        virtual bool operator==(const ObjectPtrBase& other) const = 0;
-        virtual bool operator!=(const ObjectPtrBase& other) const = 0;
+        virtual bool operator==(const ObjPtrBase& other) const = 0;
+        virtual bool operator!=(const ObjPtrBase& other) const = 0;
         virtual bool operator==(std::nullptr_t) const = 0;
         virtual bool operator!=(std::nullptr_t) const = 0;
     };
 
     template<typename T>
-    class ObjectPtr final : public ObjectPtrBase
+    class ObjPtr final : public ObjPtrBase
     {
     private:
         friend class ObjectManager;
         friend class ObjectSerializer;
-        template<typename> friend class ObjectPtr;
+        template<typename> friend class ObjPtr;
 
         T* m_raw = nullptr;
         uint32_t m_ptrID = UINT32_MAX;
@@ -114,7 +114,7 @@ namespace MMMEngine
         }
 
         // private 생성자 - ObjectManager만 생성 가능
-        ObjectPtr(T* raw, uint32_t id, uint32_t gen)
+        ObjPtr(T* raw, uint32_t id, uint32_t gen)
             : m_raw(raw)
             , m_ptrID(id)
             , m_ptrGeneration(gen)
@@ -123,20 +123,20 @@ namespace MMMEngine
 
     public:
         // 기본 생성자 (null handle)
-        ObjectPtr(std::nullptr_t) { Reset(); }
-        ObjectPtr() = default;
+        ObjPtr(std::nullptr_t) { Reset(); }
+        ObjPtr() = default;
 
         // 복사/이동은 허용
-        ObjectPtr(const ObjectPtr&) = default;
-        ObjectPtr(ObjectPtr&&) noexcept = default;
-        ObjectPtr& operator=(const ObjectPtr&) = default;
-        ObjectPtr& operator=(ObjectPtr&&) noexcept = default;
+        ObjPtr(const ObjPtr&) = default;
+        ObjPtr(ObjPtr&&) noexcept = default;
+        ObjPtr& operator=(const ObjPtr&) = default;
+        ObjPtr& operator=(ObjPtr&&) noexcept = default;
 
         virtual void Reset() override { m_raw = nullptr; m_ptrID = UINT32_MAX; m_ptrGeneration = 0; }
 
         template<typename U,
             typename std::enable_if<std::is_base_of<T, U>::value, int>::type = 0>
-        ObjectPtr(const ObjectPtr<U>& other)
+        ObjPtr(const ObjPtr<U>& other)
             : m_raw(static_cast<T*>(other.m_raw))
             , m_ptrID(other.m_ptrID)
             , m_ptrGeneration(other.m_ptrGeneration)
@@ -145,7 +145,7 @@ namespace MMMEngine
 
         template<typename U,
             typename std::enable_if<std::is_base_of<T, U>::value, int>::type = 0>
-        ObjectPtr& operator=(const ObjectPtr<U>& other)
+        ObjPtr& operator=(const ObjPtr<U>& other)
         {
             m_raw = static_cast<T*>(other.m_raw);
             m_ptrID = other.m_ptrID;
@@ -161,14 +161,14 @@ namespace MMMEngine
         /// <typeparam name="U"></typeparam>
         /// <returns></returns>
         template<typename U>
-        ObjectPtr<U> Cast() const
+        ObjPtr<U> Cast() const
         {
             if (U* casted = dynamic_cast<U*>(m_raw))
             {
                 return ObjectManager::Get().GetPtrFast<U>(casted, m_ptrID, m_ptrGeneration);
             }
             
-            return ObjectPtr<U>();
+            return ObjPtr<U>();
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace MMMEngine
         /// <typeparam name="U"></typeparam>
         /// <returns></returns>
         template<typename U>
-        ObjectPtr<U> As() const
+        ObjPtr<U> As() const
         {
             static_assert(std::is_base_of_v<Object, U>,
                 "As<U>() : U는 Object를 상속받아야 합니다.");
@@ -201,13 +201,13 @@ namespace MMMEngine
             return raw;
         }
 
-        virtual bool operator==(const ObjectPtrBase& other) const override
+        virtual bool operator==(const ObjPtrBase& other) const override
         {
             return m_ptrID == other.GetPtrID() &&
                 m_ptrGeneration == other.GetPtrGeneration();
         }
 
-        virtual bool operator!=(const ObjectPtrBase& other) const override
+        virtual bool operator!=(const ObjPtrBase& other) const override
         {
             return !(*this == other);
         }
@@ -226,16 +226,16 @@ namespace MMMEngine
         bool operator==(T* other) const { return Get() == other; }
         bool operator!=(T* other) const { return Get() != other; }
 
-        friend bool operator==(T* lhs, const ObjectPtr& rhs) { return rhs == lhs; }
-        friend bool operator!=(T* lhs, const ObjectPtr& rhs) { return rhs != lhs; }
+        friend bool operator==(T* lhs, const ObjPtr& rhs) { return rhs == lhs; }
+        friend bool operator!=(T* lhs, const ObjPtr& rhs) { return rhs != lhs; }
 
         bool operator==(const T* other) const { return Get() == other; }
         bool operator!=(const T* other) const { return Get() != other; }
 
-        friend bool operator==(const T* lhs, const ObjectPtr& rhs) { return rhs == lhs; }
-        friend bool operator!=(const T* lhs, const ObjectPtr& rhs) { return rhs != lhs; }
+        friend bool operator==(const T* lhs, const ObjPtr& rhs) { return rhs == lhs; }
+        friend bool operator!=(const T* lhs, const ObjPtr& rhs) { return rhs != lhs; }
 
-        virtual bool IsSameObject(const ObjectPtrBase& other) const override;
+        virtual bool IsSameObject(const ObjPtrBase& other) const override;
 
         explicit operator bool() const { return IsValid(); }
 
