@@ -9,17 +9,17 @@
 
 PhongRenderer::PhongRenderer()
 {
-	// ¸®¼Ò½º ºÒ·¯¿À±â
-	m_pVSShader = ResourceManager::GetInstance()->LoadFile<VSResource>(L"../Resources/Shader/VS/SkeletalVertexShader.hlsl");
-	m_pPSShader = ResourceManager::GetInstance()->LoadFile<PSResource>(L"../Resources/Shader/PS/AlphaClipPixelShader.hlsl");
+	// ë¦¬ì†ŒìŠ¤ ë¶ˆëŸ¬ì˜¤ê¸°
+	m_pVSShader = ResourceManager::GetInstance()->LoadFile<VSResource>(L"../Resources/Shader/B_Phong/VS/SkeletalVertexShader.hlsl");
+	m_pPSShader = ResourceManager::GetInstance()->LoadFile<PSResource>(L"../Resources/Shader/B_Phong/PS/AlphaClipPixelShader.hlsl");
 	
-	// TODO::filePath ¹®Á¦ ´Ù¸¥¹æ¹ı ¾ø³ª Ã£¾Æº¸±â
+	// TODO::filePath ë¬¸ì œ ë‹¤ë¥¸ë°©ë²• ì—†ë‚˜ ì°¾ì•„ë³´ê¸°
 	m_pVSShader->Initialize();
 	m_pPSShader->Initialize();
 
 	auto device = ResourceManager::GetInstance()->GetDevice();
 
-	// ÀÎÇ² ·¹ÀÌ¾Æ¿ô »ı¼º
+	// ì¸í’‹ ë ˆì´ì•„ì›ƒ ìƒì„±
 	D3D11_INPUT_ELEMENT_DESC layout[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -57,7 +57,7 @@ PhongRenderer::PhongRenderer()
 void PhongRenderer::Render()
 {
 	
-	// ¹öÅØ½º µî·Ï
+	// ë²„í…ìŠ¤ ë“±ë¡
 	UINT stride = sizeof(Mesh_Vertex);
 	UINT offset = 0;
 	m_pDeviceContext->IASetInputLayout(m_pInputLayout.Get());
@@ -67,7 +67,7 @@ void PhongRenderer::Render()
 	m_pDeviceContext->VSSetShader(m_pVSShader->m_pVertexShader.Get(), nullptr, 0);
 	m_pDeviceContext->PSSetShader(m_pPSShader->m_pPixelShader.Get(), nullptr, 0);
 
-	// Æ®·£½ºÆû µî·Ï
+	// íŠ¸ëœìŠ¤í¼ ë“±ë¡
 	Render_TransformBuffer transformBuffer;
 	transformBuffer.mWorld = XMMatrixTranspose(m_worldMat);
 	transformBuffer.mNormalMatrix = XMMatrixInverse(nullptr, m_worldMat);
@@ -75,7 +75,7 @@ void PhongRenderer::Render()
 	m_pDeviceContext->VSSetConstantBuffers(1, 1, m_pTransBuffer.GetAddressOf());
 	//m_pDeviceContext->PSSetConstantBuffers(1, 1, m_pTransBuffer.GetAddressOf());
 
-	// ¸ŞÅ×¸®¾ó µî·Ï
+	// ë©”í…Œë¦¬ì–¼ ë“±ë¡
 	auto material = dynamic_cast<PhongMaterial*>(m_pMaterial.get());
 	if (material) {
 		Render_MaterialBuffer matBuffer;
@@ -98,6 +98,6 @@ void PhongRenderer::Render()
 
 
 
-	// µå·Î¿ìÄİ
+	// ë“œë¡œìš°ì½œ
 	m_pDeviceContext->DrawIndexed(m_IndicesSize, 0, 0);
 }
