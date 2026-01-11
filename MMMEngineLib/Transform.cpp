@@ -2,6 +2,8 @@
 #include "StringHelper.h"
 #include "rttr/registration"
 
+using namespace DirectX::SimpleMath;
+
 RTTR_REGISTRATION
 {
 	using namespace rttr;

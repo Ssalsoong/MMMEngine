@@ -1,11 +1,9 @@
 #pragma once
 #include "Singleton.hpp"
 
-using namespace MMMEngine::Utility;
-
 namespace MMMEngine
 {
-	class SceneManager : public Singleton<SceneManager>
+	class SceneManager : public Utility::Singleton<SceneManager>
 	{
 		void StartUp();
 		void ShutDown();

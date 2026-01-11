@@ -40,14 +40,14 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <PreferredToolArchitecture>x64</PreferredToolArchitecture>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="AssetEntry.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Delegates.hpp" />
     <ClInclude Include="dxtk\Inc\Audio.h" />
@@ -173,17 +174,19 @@
     <ClInclude Include="dxtk\Inc\XboxDDSTextureLoader.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GlobalRegistry.h" />
+    <ClInclude Include="IAssetResolver.h" />
+    <ClInclude Include="IBytesProvider.h" />
     <ClInclude Include="MMMApplication.h" />
+    <ClInclude Include="MMMResources.h" />
     <ClInclude Include="MUID.h" />
     <ClInclude Include="InputConstant.h" />
     <ClInclude Include="InputKeyCode.h" />
     <ClInclude Include="MMMInput.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="MMMResource.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="MMMTime.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectManager.h" />
-    <ClInclude Include="ObjectSerializer.h" />
     <ClInclude Include="rttr\access_levels.h" />
     <ClInclude Include="rttr\argument.h" />
     <ClInclude Include="rttr\array_range.h" />
@@ -312,12 +315,19 @@
     <ClInclude Include="rttr\variant_associative_view.h" />
     <ClInclude Include="rttr\variant_sequential_view.h" />
     <ClInclude Include="rttr\wrapper_mapper.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SerializableEvent.h" />
     <ClInclude Include="Singleton.hpp" />
     <ClInclude Include="StringHelper.h" />
+    <ClInclude Include="TestIO.h" />
+    <ClInclude Include="TestPakBuilder.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="ResourceManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.cpp" />
@@ -325,10 +335,8 @@
     <ClCompile Include="dxtk\Src\SimpleMath.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
-    <ClCompile Include="ObjectSerializer.cpp" />
     <ClCompile Include="rttr\constructor.cpp" />
     <ClCompile Include="rttr\destructor.cpp" />
     <ClCompile Include="rttr\detail\comparison\compare_equal.cpp" />
@@ -361,6 +369,9 @@
     <ClCompile Include="rttr\variant_associative_view.cpp" />
     <ClCompile Include="rttr\variant_sequential_view.cpp" />
     <ClCompile Include="StringHelper.cpp" />
+    <ClInclude Include="TestAssetDataBase.h" />
+    <ClCompile Include="TestAssetDataBase.cpp" />
+    <ClCompile Include="TestPakBuilder.cpp" />
     <ClCompile Include="TimeManager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>

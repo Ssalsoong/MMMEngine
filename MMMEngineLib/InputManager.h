@@ -3,7 +3,7 @@
 #include "InputConstant.h"
 #include "InputKeyCode.h"
 #include <Windows.h>
-#include <map>
+#include <unordered_map>
 
 #include "SimpleMath.h"
 
@@ -22,7 +22,7 @@ namespace MMMEngine
 
         RECT m_clientRect;
 
-        std::map<KeyCode, int> m_keyCodeMap; // KeyCode와 Windows VKey 매핑
+        std::unordered_map<KeyCode, int> m_keyCodeMap; // KeyCode와 Windows VKey 매핑
         void InitKeyCodeMap(); // KeyCode를 Windows VKey로 매핑
 
         //// 게임패드 관리 (최대 4개)

@@ -2,11 +2,9 @@
 #include "Singleton.hpp"
 #include <chrono>
 
-using namespace MMMEngine::Utility;
-
 namespace MMMEngine
 {
-	class TimeManager : public Singleton<TimeManager>
+	class TimeManager : public Utility::Singleton<TimeManager>
 	{
 	private:
 		std::chrono::steady_clock::time_point m_initTime;

@@ -21,7 +21,7 @@ RTTR_REGISTRATION
 	registration::method("f", &f);
 }
 
-void Update() 
+void Update()
 {
 	InputManager::Get().Update();
 	if (Input::GetKey(KeyCode::A))
@@ -33,7 +33,7 @@ void Update()
 		Application::Quit();
 }
 
-void Render() {  }
+void Render() {}
 
 class Test
 {
@@ -85,7 +85,8 @@ int main()
 
 	MMMEngine::g_pApp = &app;
 
-	app.OnIntialize.AddListenerLambda([&app]() { InputManager::Get().StartUp(app.GetWindowHandle()); });
+	app.SetProcessHandle(GetModuleHandle(NULL));
+	app.OnInitialize.AddListenerLambda([&app]() { InputManager::Get().StartUp(app.GetWindowHandle()); });
 	app.OnUpdate.AddListener<&Update>();
 	app.OnRender.AddListener<&Render>();
 
@@ -94,7 +95,7 @@ int main()
 	app.Run();
 
 	MUID id = MUID::NewMUID();
-	
+
 	type::invoke("f", {});
 
 	std::cout << "Generated MUID: " << id.ToString() << std::endl;
@@ -135,7 +136,7 @@ int main()
 	auto s = go.get_type().get_name().to_string();
 
 	auto a = Object::NewObject<RollObject>();
-	if(a) // 혹은 a.IsValid()
+	if (a) // 혹은 a.IsValid()
 		a->A();
 	auto s2 = a.Cast<Object>()->GetName();
 	auto s3 = a.As<Object>()->GetName();

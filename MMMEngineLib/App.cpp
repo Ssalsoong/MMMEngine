@@ -6,8 +6,17 @@ MMMEngine::Utility::App::App()
 	: m_hInstance(GetModuleHandle(NULL))
 	, m_hWnd(NULL)
 	, m_isRunning(false)
-	, m_needResizeWindow(false)
-	, m_windowInfo({ L"MMM Engine Application" , 1600, 900})
+	, m_windowInfoDirty(false)
+	, m_windowInfo({ L"MMM Engine Application",1600,900 })
+{
+}
+
+MMMEngine::Utility::App::App(LPCWSTR title, LONG width, LONG height)
+	: m_hInstance(GetModuleHandle(NULL))
+	, m_hWnd(NULL)
+	, m_isRunning(false)
+	, m_windowInfoDirty(false)
+	, m_windowInfo({ title,width,height })
 {
 }
 
@@ -25,14 +34,14 @@ int MMMEngine::Utility::App::Run()
 		return -2;
 
 	m_isRunning = true;
-	OnIntialize(this);
+	OnInitialize(this);
 	MSG msg = {};
 	while (m_isRunning && msg.message != WM_QUIT)
 	{
-		if (m_needResizeWindow)
+		if (m_windowInfoDirty)
 		{
-			OnResize(this, m_windowInfo.width, m_windowInfo.height);
-			m_needResizeWindow = false;
+			OnWindowInfoChanged(this, m_windowInfo.width, m_windowInfo.height);
+			m_windowInfoDirty = false;
 		}
 
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
@@ -101,7 +110,7 @@ LRESULT MMMEngine::Utility::App::HandleWindowMessage(HWND hWnd, UINT uMsg, WPARA
 			if (newWidth != m_windowInfo.width || newHeight != m_windowInfo.height) {
 				m_windowInfo.width = newWidth;
 				m_windowInfo.height = newHeight;
-				m_needResizeWindow = true;
+				m_windowInfoDirty = true;
 			}
 		}
 		break;

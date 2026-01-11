@@ -8,5 +8,7 @@ namespace MMMEngine::Utility
 	{
 	public:
 		static std::vector<std::string> Split(const std::string str, char delim);
+		static std::wstring StringToWString(const std::string& str);
+		static std::string WStringToString(const std::wstring& wstr);
 	};
 }
