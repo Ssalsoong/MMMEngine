@@ -15,8 +15,8 @@ void Init()
 {
 	InputManager::Get().StartUp(MMMEngine::g_pApp->GetWindowHandle());
 
-	ResourceManager::Get().SetResolver(&MMMEngine::Player::g_resolver);
-	ResourceManager::Get().SetBytesProvider(&MMMEngine::Player::g_bytes);
+	ResourceManager::Get().SetResolver(&Player::g_resolver);
+	ResourceManager::Get().SetBytesProvider(&Player::g_bytes);
 }
 
 void Update()
@@ -32,13 +32,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	App app{L"MMMPlayer",1280,720};
 	MMMEngine::g_pApp = &app;
 
-	//if (!MMMEngine::Player::g_pathMap.LoadFromFile(L"Data/PathMap.bin"))
+	//if (!Player::g_pathMap.LoadFromFile(L"Data/PathMap.bin"))
 	//	return -1;
 
-	//if (!MMMEngine::Player::g_assetIndex.LoadFromFile(L"Data/AssetIndex.bin"))
+	//if (!Player::g_assetIndex.LoadFromFile(L"Data/AssetIndex.bin"))
 	//	return -2;
 
-	//if (!MMMEngine::Player::g_pak.Open(L"Data/assets.pak"))
+	//if (!Player::g_pak.Open(L"Data/assets.pak"))
 	//	return -3;
 
 	app.SetProcessHandle(hInstance); //winmain으로 진입하는 경우 hIntance물려주기
