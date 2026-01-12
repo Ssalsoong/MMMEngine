@@ -5,10 +5,10 @@
 class PhongMaterial : public Material
 {
 public:
-	std::shared_ptr<Texture2D> diffuse = nullptr;		// µğÇ»Áî¸Ê
-	std::shared_ptr<Texture2D> specular = nullptr;		// ½ºÆåÅ§·¯¸Ê
-	std::shared_ptr<Texture2D> normal = nullptr;		// ³ë¸Ö¸Ê
-	std::shared_ptr<Texture2D> emissive = nullptr;		// ¹ß±¤¸Ê
+	std::shared_ptr<Texture2D> diffuse = nullptr;		// ë””í“¨ì¦ˆë§µ
+	std::shared_ptr<Texture2D> specular = nullptr;		// ìŠ¤í™í˜ëŸ¬ë§µ
+	std::shared_ptr<Texture2D> normal = nullptr;		// ë…¸ë©€ë§µ
+	std::shared_ptr<Texture2D> emissive = nullptr;		// ë°œê´‘ë§µ
 
 	DirectX::SimpleMath::Vector4 matDiffuse = DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f);
 	DirectX::SimpleMath::Vector4 matSpecular = DirectX::SimpleMath::Vector4(1.0f, 1.0f, 1.0f, 1.0f);

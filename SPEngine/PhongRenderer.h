@@ -7,18 +7,18 @@ class PSResource;
 class PhongRenderer : public Renderer
 {
 private:
-	//MW::ComPtr<ID3D11VertexShader> m_pVertexShader;		// Á¤Á¡ ½¦ÀÌ´õ
-	//MW::ComPtr<ID3D11PixelShader> m_pAlphaClipShader;	// µğÇ»Áî Àü¿ë ½¦ÀÌ´õ
-	std::shared_ptr<VSResource> m_pVSShader;			// VS ¸®¼Ò½º
-	std::shared_ptr<PSResource> m_pPSShader;			// PS ¸®¼Ò½º
+	//MW::ComPtr<ID3D11VertexShader> m_pVertexShader;		// ì •ì  ì‰ì´ë”
+	//MW::ComPtr<ID3D11PixelShader> m_pAlphaClipShader;	// ë””í“¨ì¦ˆ ì „ìš© ì‰ì´ë”
+	std::shared_ptr<VSResource> m_pVSShader;			// VS ë¦¬ì†ŒìŠ¤
+	std::shared_ptr<PSResource> m_pPSShader;			// PS ë¦¬ì†ŒìŠ¤
 
-	MW::ComPtr<ID3D11InputLayout> m_pInputLayout;		// ÀÔ·Â ·¹ÀÌ¾Æ¿ô
-	MW::ComPtr<ID3D11Buffer> m_pTransBuffer;	// Æ®·£½ºÆû ¹öÆÛ
-	MW::ComPtr<ID3D11Buffer> m_pMatBuffer;		// ¸ŞÅ×¸®¾ó ¹öÆÛ
-	MW::ComPtr<ID3D11Buffer> m_pBoneBuffer;		// º» ¹öÆÛ
-	MW::ComPtr<ID3D11Buffer> m_pShadowBuffer;	// ±×¸²ÀÚ ¹öÆÛ
+	MW::ComPtr<ID3D11InputLayout> m_pInputLayout;		// ì…ë ¥ ë ˆì´ì•„ì›ƒ
+	MW::ComPtr<ID3D11Buffer> m_pTransBuffer;	// íŠ¸ëœìŠ¤í¼ ë²„í¼
+	MW::ComPtr<ID3D11Buffer> m_pMatBuffer;		// ë©”í…Œë¦¬ì–¼ ë²„í¼
+	MW::ComPtr<ID3D11Buffer> m_pBoneBuffer;		// ë³¸ ë²„í¼
+	MW::ComPtr<ID3D11Buffer> m_pShadowBuffer;	// ê·¸ë¦¼ì ë²„í¼
 public:
 	PhongRenderer();
-	void Render();
+	void Render() override;
 };
 

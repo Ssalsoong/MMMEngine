@@ -3,11 +3,13 @@
 class PBRMaterial : public Material
 {
 public:
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> baseColor;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> metallic;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> roughness;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> ao;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> normal;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> emissive;
+    std::shared_ptr<Texture2D> albedo;
+    std::shared_ptr<Texture2D> normal;
+    std::shared_ptr<Texture2D> metallic;
+    std::shared_ptr<Texture2D> roughness;
+    std::shared_ptr<Texture2D> ao;
+    std::shared_ptr<Texture2D> emissive;
+
+    Render_PBRMaterialBuffer matBuffer;
 };
 

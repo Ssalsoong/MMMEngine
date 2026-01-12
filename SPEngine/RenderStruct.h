@@ -15,8 +15,8 @@ enum RenderType {
 };
 
 struct Render_CamBuffer {
-	DirectX::SimpleMath::Matrix mView = DirectX::SimpleMath::Matrix::Identity;			// Ä«¸Ş¶óÁÂÇ¥°è º¯È¯Çà·Ä
-	DirectX::SimpleMath::Matrix mProjection = DirectX::SimpleMath::Matrix::Identity;	// ndcÁÂÇ¥°è º¯È¯Çà·Ä
+	DirectX::SimpleMath::Matrix mView = DirectX::SimpleMath::Matrix::Identity;			// ì¹´ë©”ë¼ì¢Œí‘œê³„ ë³€í™˜í–‰ë ¬
+	DirectX::SimpleMath::Matrix mProjection = DirectX::SimpleMath::Matrix::Identity;	// ndcì¢Œí‘œê³„ ë³€í™˜í–‰ë ¬
 	DirectX::SimpleMath::Vector4 camPos;
 };
 
@@ -33,12 +33,22 @@ struct Render_LightBuffer {
 
 struct Render_MaterialBuffer
 {
-	DirectX::SimpleMath::Vector4 Matambient;	// ¸ŞÅ×¸®¾ó Á¤º¸
+	DirectX::SimpleMath::Vector4 Matambient;	// ë©”í…Œë¦¬ì–¼ ì •ë³´
 	DirectX::SimpleMath::Vector4 Matdiffuse;
 	DirectX::SimpleMath::Vector4 Matspecular;
 
 	int shiness;
 	DirectX::SimpleMath::Vector3 padding;
+};
+
+struct Render_PBRMaterialBuffer
+{
+    DirectX::SimpleMath::Vector4 BaseColor;	// ë©”í…Œë¦¬ì–¼ ì •ë³´
+    
+    float Metalic = 0.0f;
+    float mRoughness = 0.0f;
+    float mAoStrength = 1.0f;
+    float mEmissive = 1.0f;
 };
 
 struct Render_ShadowBuffer

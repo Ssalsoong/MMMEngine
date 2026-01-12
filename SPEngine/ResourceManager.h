@@ -11,12 +11,12 @@ private:
 	std::unordered_map<std::wstring, std::shared_ptr<GameResource>> resources;
 	std::vector<std::wstring> erasePending;
 	static std::unique_ptr<ResourceManager> instance;
-	Microsoft::WRL::ComPtr<ID3D11Device5> m_pDevice;
+    Microsoft::WRL::ComPtr<ID3D11Device5> m_pDevice;
 
 public:
 	static ResourceManager* GetInstance();
 	void Initialize(Microsoft::WRL::ComPtr<ID3D11Device5>& _device);
-	void Start();
+    virtual void Start();
 	void Update();
 	
 	ID3D11Device5* GetDevice() { return m_pDevice.Get(); }
@@ -32,12 +32,12 @@ ResourceManager::LoadFile(std::wstring _path, Args&&... args)
 	auto it = resources.find(_path);
 	
 	if (it != resources.end()) {
-		// ±âÁ¸ ¸®¼Ò½º ¹İÈ¯, ¸¸·á½Ã°£ ÃÊ±âÈ­
+		// ê¸°ì¡´ ë¦¬ì†ŒìŠ¤ ë°˜í™˜, ë§Œë£Œì‹œê°„ ì´ˆê¸°í™”
 		it->second->elipsedTime = 0.0f;
 		return std::dynamic_pointer_cast<T>(it->second);
 	}
 	else {
-		// »õ·Î¿î ¸®¼Ò½º »ı¼º
+		// ìƒˆë¡œìš´ ë¦¬ì†ŒìŠ¤ ìƒì„±
 		auto resource = std::make_shared<T>(std::forward<Args>(args)...);
 		resource->filePath = _path;
 		resources[_path] = resource;

@@ -9,6 +9,8 @@
 #include "Texture2D.h"
 #include "PhongMaterial.h"
 #include "PhongRenderer.h"
+#include "PBRMaterial.h"
+#include "PBRRenderer.h"
 #include "RenderStruct.h"
 
 using namespace DirectX::SimpleMath;
@@ -64,14 +66,14 @@ bool AssimpLoader::LoadMaterials(std::vector<std::shared_ptr<Material>>& _out, c
 		aiMaterial* aiMat = _scene->mMaterials[i];
 		auto m_pDevice = ResourceManager::GetInstance()->GetDevice();
 
-		// ÇöÀç ±âº»°ªÀº Æş ¸ŞÅ×¸®¾óÀÌ´Ù.
+		// í˜„ì¬ ê¸°ë³¸ê°’ì€ í ë©”í…Œë¦¬ì–¼ì´ë‹¤.
 		auto currMat = std::make_shared<PhongMaterial>();
 		currMat->matType = RenderType::PHONG;
 		currMat->renderer = std::make_shared<PhongRenderer>();
 
 		_out[i] = currMat;
 
-		// º£ÀÌ½º ÄÃ·¯
+		// ë² ì´ìŠ¤ ì»¬ëŸ¬
 		aiColor4D baseColor;
 		if (aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, baseColor) == AI_SUCCESS) {
 			_out[i]->baseColor = { baseColor.r, baseColor.g, baseColor.b, baseColor.a };
@@ -80,13 +82,13 @@ bool AssimpLoader::LoadMaterials(std::vector<std::shared_ptr<Material>>& _out, c
 			_out[i]->baseColor = { baseColor.r, baseColor.g, baseColor.b, baseColor.a };
 		}
 
-		// µğÇ»Áî
+		// ë””í“¨ì¦ˆ
 		if (aiMat->GetTextureCount(aiTextureType_DIFFUSE)) {
 			if (aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &aiStr) == aiReturn_SUCCESS) {
 				std::filesystem::path p = std::filesystem::path(aiStr.C_Str());
 				std::filesystem::path relativePath = _path / p.filename();
 
-				// ¸®¼Ò½º ¸Å´ÏÀú¿¡¼­ ºÒ·¯¿À±â
+				// ë¦¬ì†ŒìŠ¤ ë§¤ë‹ˆì €ì—ì„œ ë¶ˆëŸ¬ì˜¤ê¸°
 				auto diffMat = ResourceManager::GetInstance()->LoadFile<Texture2D>(relativePath.wstring());
 				if(!diffMat->srv)
 					HR_T(CreateWICTextureFromFile(m_pDevice, relativePath.wstring().c_str(), nullptr, diffMat->srv.GetAddressOf()));
@@ -95,7 +97,7 @@ bool AssimpLoader::LoadMaterials(std::vector<std::shared_ptr<Material>>& _out, c
 			}
 		}
 
-		// µğÇ»Áî°¡ ¾øÀ¸¸é?
+		// ë””í“¨ì¦ˆê°€ ì—†ìœ¼ë©´?
 		if (!currMat->diffuse) {
 			auto diffMat = ResourceManager::GetInstance()->LoadFile<Texture2D>(defaultDiffuse);
 			if(!diffMat->srv)
@@ -104,7 +106,7 @@ bool AssimpLoader::LoadMaterials(std::vector<std::shared_ptr<Material>>& _out, c
 			currMat->diffuse = diffMat;
 		}
 
-		// ½ºÆäÅ§·¯
+		// ìŠ¤í˜í˜ëŸ¬
 		if (aiMat->GetTextureCount(aiTextureType_SPECULAR)) {
 			if (aiMat->GetTexture(aiTextureType_SPECULAR, 0, &aiStr) == aiReturn_SUCCESS) {
 				std::filesystem::path p = std::filesystem::path(aiStr.C_Str());
@@ -118,7 +120,7 @@ bool AssimpLoader::LoadMaterials(std::vector<std::shared_ptr<Material>>& _out, c
 			}
 		}
 
-		// ³ë¸»
+		// ë…¸ë§
 		if (aiMat->GetTextureCount(aiTextureType_NORMALS)) {
 			if (aiMat->GetTexture(aiTextureType_NORMALS, 0, &aiStr) == aiReturn_SUCCESS) {
 				std::filesystem::path p = std::filesystem::path(aiStr.C_Str());
@@ -134,7 +136,7 @@ bool AssimpLoader::LoadMaterials(std::vector<std::shared_ptr<Material>>& _out, c
 			}
 		}
 
-		// ÀÌ¹Ì¼Ç
+		// ì´ë¯¸ì…˜
 		if (aiMat->GetTextureCount(aiTextureType_EMISSIVE)) {
 			if (aiMat->GetTexture(aiTextureType_EMISSIVE, 0, &aiStr) == aiReturn_SUCCESS) {
 				std::filesystem::path p = std::filesystem::path(aiStr.C_Str());
@@ -156,13 +158,13 @@ bool AssimpLoader::LoadMaterials(std::vector<std::shared_ptr<Material>>& _out, c
 
 bool AssimpLoader::LoadMeshBuffers(std::shared_ptr<MeshGPU>& _out, std::shared_ptr<MeshData>& _meshData)
 {
-	// shared »ı¼º
+	// shared ìƒì„±
 	_out = std::make_shared<MeshGPU>();
 
-	// µğ¹ÙÀÌ½º °¡Á®¿À±â
+	// ë””ë°”ì´ìŠ¤ ê°€ì ¸ì˜¤ê¸°
 	const auto device = ResourceManager::GetInstance()->GetDevice();
 
-	// ¹öÅØ½º ¹öÆÛ »ı¼º
+	// ë²„í…ìŠ¤ ë²„í¼ ìƒì„±
 	D3D11_BUFFER_DESC bd = {};
 	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bd.Usage = D3D11_USAGE_DEFAULT;
@@ -180,7 +182,7 @@ bool AssimpLoader::LoadMeshBuffers(std::shared_ptr<MeshGPU>& _out, std::shared_p
 			_out->vertexBuffers.push_back(tempBuffer);
 	}
 
-	// ÀÎµ¦½º ¹öÆÛ »ı¼º
+	// ì¸ë±ìŠ¤ ë²„í¼ ìƒì„±
 	bd = {};
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.Usage = D3D11_USAGE_DEFAULT;
@@ -235,20 +237,20 @@ std::shared_ptr<StaticMesh> AssimpLoader::LoadStaticMesh(std::wstring _filePath)
 		aiProcess_ImproveCacheLocality |
 		aiProcess_ConvertToLeftHanded;
 
-	// °æ·Î °¡°ø
+	// ê²½ë¡œ ê°€ê³µ
 	std::filesystem::path p = _filePath.c_str();
 
-	// À¯È¿¼º È®ÀÎ
+	// ìœ íš¨ì„± í™•ì¸
 	if (!p.has_filename())
 		throw std::exception("AssimpLoader::LoadStaticMesh : path is not file!!");
 	if (!std::filesystem::exists(p))
 		throw std::exception("AssimpLoader::LoadStaticMesh : file is not found!!");
 
-	// ¸®¼Ò½º ·Îµå
+	// ë¦¬ì†ŒìŠ¤ ë¡œë“œ
 	auto scene = m_importer.ReadFile(p.string().c_str(), importFlags);
 	auto meshResource = ResourceManager::GetInstance()->LoadFile<StaticMesh>(p.wstring());
 
-	// ÀÓÆ÷Æ® ¼º°ø¿©ºÎ È®ÀÎ
+	// ì„í¬íŠ¸ ì„±ê³µì—¬ë¶€ í™•ì¸
 	if (!scene || !scene->HasMeshes()) {
 		std::string assErrStr = m_importer.GetErrorString();
 		std::string errorStr = "AssimpLoader::LoadStaticMesh : Scene load Error!! ("
@@ -259,10 +261,10 @@ std::shared_ptr<StaticMesh> AssimpLoader::LoadStaticMesh(std::wstring _filePath)
 	if (!meshResource->meshData) {
 		auto meshData = std::make_shared<MeshData>();
 		
-		// ¸Ş½Ã ±×·ì <MatIdx, vec<MeshIdx>>
+		// ë©”ì‹œ ê·¸ë£¹ <MatIdx, vec<MeshIdx>>
 		std::unordered_map<UINT, std::vector<UINT>> meshGroupData;
 
-		// ¸Ş½Ã ·Îµù
+		// ë©”ì‹œ ë¡œë”©
 		for (UINT i = 0; i < scene->mNumMeshes; i++) {
 			std::vector<Mesh_Vertex> tempV;
 			std::vector<UINT> tempI;
@@ -275,16 +277,16 @@ std::shared_ptr<StaticMesh> AssimpLoader::LoadStaticMesh(std::wstring _filePath)
 			meshGroupData[scene->mMeshes[i]->mMaterialIndex].push_back(i);
 		}
 
-		// ¸Ş½Ã±×·ì ÀúÀå
+		// ë©”ì‹œê·¸ë£¹ ì €ì¥
 		meshResource->meshGroupData = meshGroupData;
 
-		// ¸ŞÅ×¸®¾ó ·Îµù
+		// ë©”í…Œë¦¬ì–¼ ë¡œë”©
 		LoadMaterials(meshData->materials, scene, p.parent_path().wstring());
 
-		// ¸Ş½Ãµ¥ÀÌÅÍ ¸®¼Ò½º µî·Ï
+		// ë©”ì‹œë°ì´í„° ë¦¬ì†ŒìŠ¤ ë“±ë¡
 		meshResource->meshData = meshData;
 
-		// MeshBuffer »ı¼º
+		// MeshBuffer ìƒì„±
 		LoadMeshBuffers(meshResource->gpuBuffer, meshResource->meshData);
 	}
 
