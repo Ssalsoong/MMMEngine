@@ -1,0 +1,3 @@
+[submodule "MainEngine"]
+	path = MainEngine
+	url = https://github.com/minkee009/MMMEngine.git
